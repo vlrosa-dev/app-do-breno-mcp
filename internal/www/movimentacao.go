@@ -13,12 +13,12 @@ import (
 )
 
 func (api *API) CriarMovimentacao(
-	ctx context.Context, apiKey, token string, movimentacao *structs.MovimentacaoRequest,
+	ctx context.Context, movimentacao *structs.MovimentacaoRequest,
 ) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	url, err := url.Parse(api.BaseURL + "/rest/v1/rpc/movimentacao_create_with_tags_v2")
+	url, err := url.Parse(api.baseURL + "/rest/v1/rpc/movimentacao_create_with_tags_v2")
 	if err != nil {
 		return "", fmt.Errorf("parsing base URL: %w", err)
 	}
@@ -33,8 +33,8 @@ func (api *API) CriarMovimentacao(
 		return "", fmt.Errorf("montando request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	req.Header.Set("Apikey", apiKey)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.token))
+	req.Header.Set("Apikey", api.apiKey)
 
 	resp, err := api.client.Do(req)
 	if err != nil {

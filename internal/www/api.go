@@ -13,22 +13,29 @@ import (
 )
 
 type API struct {
-	BaseURL string
+	baseURL string
 	client  *http.Client
+	token   string
+	apiKey  string
 }
 
-func NewAPI(baseURL string, client *http.Client) *API {
+func NewAPI(baseURL, apiKey string, client *http.Client) *API {
 	return &API{
-		BaseURL: baseURL,
+		baseURL: baseURL,
+		apiKey:  apiKey,
 		client:  client,
 	}
 }
 
-func (api *API) GetToken(ctx context.Context, email, password, apiKey string) (*structs.AuthResponse, error) {
+func (api *API) SetToken(token string) {
+	api.token = token
+}
+
+func (api *API) Login(ctx context.Context, email, password string) (*structs.AuthResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	url, err := url.Parse(api.BaseURL + "/auth/v1/token")
+	url, err := url.Parse(api.baseURL + "/auth/v1/token")
 	if err != nil {
 		return nil, fmt.Errorf("parsing base URL: %w", err)
 	}
@@ -52,8 +59,8 @@ func (api *API) GetToken(ctx context.Context, email, password, apiKey string) (*
 		return nil, fmt.Errorf("montando request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
-	req.Header.Set("Apikey", apiKey)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.apiKey))
+	req.Header.Set("Apikey", api.apiKey)
 
 	resp, err := api.client.Do(req)
 	if err != nil {

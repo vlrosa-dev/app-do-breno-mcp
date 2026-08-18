@@ -23,14 +23,16 @@ func main() {
 
 	api := www.NewAPI(
 		config.APIBaseURL,
+		config.APIKey,
 		apiClient,
 	)
-	token, err := api.GetToken(
+	token, err := api.Login(
 		context.Background(),
 		config.APIUsername,
 		config.APIPassword,
-		config.APIKey,
 	)
+	api.SetToken(token.AccessToken)
+
 	if err != nil {
 		log.Fatal("Error fetching token:", err)
 	}
@@ -38,8 +40,6 @@ func main() {
 
 	id_transacao, err := api.CriarMovimentacao(
 		context.Background(),
-		config.APIKey,
-		token.AccessToken,
 		&structs.MovimentacaoRequest{
 			Data:      "2026-08-18",
 			Descricao: "Teste de movimentação",
