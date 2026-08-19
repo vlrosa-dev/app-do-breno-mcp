@@ -17,6 +17,7 @@ type API struct {
 	client  *http.Client
 	token   string
 	apiKey  string
+	userId  string
 }
 
 func NewAPI(baseURL, apiKey string, client *http.Client) *API {
@@ -29,6 +30,10 @@ func NewAPI(baseURL, apiKey string, client *http.Client) *API {
 
 func (api *API) SetToken(token string) {
 	api.token = token
+}
+
+func (api *API) SetUserId(userId string) {
+	api.userId = userId
 }
 
 func (api *API) Login(ctx context.Context, email, password string) (*structs.AuthResponse, error) {
@@ -78,4 +83,39 @@ func (api *API) Login(ctx context.Context, email, password string) (*structs.Aut
 		return nil, fmt.Errorf("decodificando resposta: %w", err)
 	}
 	return &auth, nil
+}
+
+func (api *API) FetchUserInfo(ctx context.Context) (*structs.UserInfoResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	url, err := url.Parse(api.baseURL + "/auth/v1/user")
+	if err != nil {
+		return nil, fmt.Errorf("parsing base URL: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("montando request: %w", err)
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.token))
+	req.Header.Set("Apikey", api.apiKey)
+
+	resp, err := api.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("chamando api de userinfo: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		corpoErro, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		return nil, fmt.Errorf("api retornou %d: %s", resp.StatusCode, corpoErro)
+	}
+
+	var userInfo structs.UserInfoResponse
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		return nil, fmt.Errorf("decodificando resposta: %w", err)
+	}
+
+	return &userInfo, nil
 }

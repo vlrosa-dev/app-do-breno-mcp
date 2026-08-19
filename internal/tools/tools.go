@@ -9,7 +9,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-func ToolMcpMovimentacao(api *www.API) mcp.ToolHandlerFor[*structs.MovimentacaoRequest, any] {
+func ToolCreateTransaction(api *www.API) mcp.ToolHandlerFor[*structs.MovimentacaoRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.MovimentacaoRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -30,7 +30,7 @@ func ToolMcpMovimentacao(api *www.API) mcp.ToolHandlerFor[*structs.MovimentacaoR
 	}
 }
 
-func ToolMcpListarMovimentacoes(api *www.API) mcp.ToolHandlerFor[*structs.ListarMovimentacoesRequest, any] {
+func ToolFetchTransactions(api *www.API) mcp.ToolHandlerFor[*structs.ListarMovimentacoesRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.ListarMovimentacoesRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -57,5 +57,26 @@ func ToolMcpListarMovimentacoes(api *www.API) mcp.ToolHandlerFor[*structs.Listar
 				&mcp.TextContent{Text: string(movimentacoes_json)},
 			},
 		}, movimentacoes, nil
+	}
+}
+
+func ToolDeleteTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DeleteTransactionRequest, any] {
+	return func(
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DeleteTransactionRequest,
+	) (*mcp.CallToolResult, any, error) {
+		err := api.DeleteTransaction(ctx, input.MovimentacaoID)
+		if err != nil {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{
+					&mcp.TextContent{Text: "Unable to delete transaction."},
+				},
+			}, nil, nil
+		}
+
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Transaction deleted successfully."},
+			},
+		}, nil, nil
 	}
 }

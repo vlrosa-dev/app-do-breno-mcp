@@ -64,7 +64,7 @@ func (api *API) FetchTransactions(
 
 	query := url.Query()
 	query.Set("select", "*")
-	query.Set("user_id", fmt.Sprintf("eq.%s", params.UserId))
+	query.Set("user_id", fmt.Sprintf("eq.%s", api.userId))
 	query.Set("tipo", fmt.Sprintf("eq.%s", params.Tipo))
 	query.Set("data", fmt.Sprintf("gte.%s", params.DataInicial))
 	query.Set("data", fmt.Sprintf("lt.%s", params.DataFinal))
@@ -96,4 +96,39 @@ func (api *API) FetchTransactions(
 	}
 
 	return movimentacoes, nil
+}
+
+func (api *API) DeleteTransaction(ctx context.Context, movimentacaoId string) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	url, err := url.Parse(api.baseURL + "/rest/v1/movimentacao")
+	if err != nil {
+		return fmt.Errorf("parsing base URL: %w", err)
+	}
+
+	query := url.Query()
+	query.Set("movimentacao_id", fmt.Sprintf("eq.%s", movimentacaoId))
+	query.Set("user_id", fmt.Sprintf("eq.%s", api.userId))
+	url.RawQuery = query.Encode()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, url.String(), nil)
+	if err != nil {
+		return fmt.Errorf("montando request: %w", err)
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.token))
+	req.Header.Set("Apikey", api.apiKey)
+
+	resp, err := api.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("erro na requisição: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		corpoErro, _ := io.ReadAll(io.LimitReader(resp.Body, 4096)) // limita leitura de corpo de erro
+		return fmt.Errorf("api retornou %d: %s", resp.StatusCode, corpoErro)
+	}
+
+	return nil
 }

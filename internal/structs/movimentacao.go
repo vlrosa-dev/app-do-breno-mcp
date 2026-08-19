@@ -11,9 +11,13 @@ type MovimentacaoRequest struct {
 	Valor     float64 `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
+type DeleteTransactionRequest struct {
+	MovimentacaoID string `json:"movimentacao_id" jsonschema:"required" description:"ID da movimentação a ser deletada"`
+}
+
 type ListarMovimentacoesRequest struct {
 	// Select      string `params:"select" description:"Campos a serem selecionados na consulta, formato: *"`
-	UserId      string `params:"user_id" description:"ID do usuário para filtrar as movimentações, formato: <user_id>"`
+	// UserId      string `params:"user_id" description:"ID do usuário para filtrar as movimentações, formato: <user_id>"`
 	Tipo        string `params:"tipo" description:"Tipo de movimentação para filtrar, valores possíveis: 'Diario' ou 'Entrada'"`
 	DataInicial string `params:"data" description:"Data da movimentação para filtrar, formato: YYYY-MM-DD"`
 	DataFinal   string `params:"data" description:"Data final da movimentação para filtrar, formato: YYYY-MM-DD"`

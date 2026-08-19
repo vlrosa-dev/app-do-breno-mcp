@@ -31,6 +31,10 @@ func main() {
 		config.APIPassword,
 	)
 	api.SetToken(token.AccessToken)
+	userInfo, err := api.FetchUserInfo(
+		context.Background(),
+	)
+	api.SetUserId(userInfo.ID)
 
 	server := mcp.NewServer(&mcp.Implementation{
 		Name:    "app-do-breno-mcp",
@@ -40,12 +44,17 @@ func main() {
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "create_transaction",
 		Description: "Create a new transaction",
-	}, tools.ToolMcpMovimentacao(api))
+	}, tools.ToolCreateTransaction(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "list_transactions",
-		Description: "List all transactions",
-	}, tools.ToolMcpListarMovimentacoes(api))
+		Name:        "fetch_transactions",
+		Description: "Fetch all transactions",
+	}, tools.ToolFetchTransactions(api))
+
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "delete_transaction",
+		Description: "Delete a transaction",
+	}, tools.ToolDeleteTransaction(api))
 
 	// Run server on stdio transport
 	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
