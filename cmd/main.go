@@ -2,12 +2,13 @@ package main
 
 import (
 	"app-do-breno-agent/internal/config"
-	"app-do-breno-agent/internal/structs"
+	"app-do-breno-agent/internal/tools"
 	"app-do-breno-agent/internal/www"
 	"context"
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
 func main() {
@@ -15,9 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
 	config := config.Load()
-	log.Println(config)
 
 	apiClient := www.NewApiClient()
 
@@ -33,25 +32,23 @@ func main() {
 	)
 	api.SetToken(token.AccessToken)
 
-	if err != nil {
-		log.Fatal("Error fetching token:", err)
-	}
-	log.Println("Fetched token:", token)
+	server := mcp.NewServer(&mcp.Implementation{
+		Name:    "app-do-breno-mcp",
+		Version: "1.0.0",
+	}, nil)
 
-	id_transacao, err := api.CriarMovimentacao(
-		context.Background(),
-		&structs.MovimentacaoRequest{
-			Data:      "2026-08-18",
-			Descricao: "Teste de movimentação",
-			TagIds:    []int{},
-			Tipo:      "Saida",
-			User:      "ab1d14db-b3a5-4951-a990-d6e4ac3195a2",
-			Valor:     0.02,
-		},
-	)
-	if err != nil {
-		log.Fatal("Error creating transaction:", err)
-	}
-	log.Println("ID da transação criada:", id_transacao)
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "create_transaction",
+		Description: "Create a new transaction",
+	}, tools.ToolMcpMovimentacao(api))
 
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "list_transactions",
+		Description: "List all transactions",
+	}, tools.ToolMcpListarMovimentacoes(api))
+
+	// Run server on stdio transport
+	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
+		log.Fatal(err)
+	}
 }
