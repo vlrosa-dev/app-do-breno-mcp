@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func (api *API) CriarMovimentacao(
+func (api *API) CreateNewTransaction(
 	ctx context.Context, movimentacao *structs.MovimentacaoRequest,
 ) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -51,7 +51,7 @@ func (api *API) CriarMovimentacao(
 	return string(id), nil
 }
 
-func (api *API) ListarMovimentacoes(
+func (api *API) FetchTransactions(
 	ctx context.Context, params *structs.ListarMovimentacoesRequest,
 ) ([]structs.ListarMovimentacoesResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)

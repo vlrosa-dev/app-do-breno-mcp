@@ -13,7 +13,7 @@ func ToolMcpMovimentacao(api *www.API) mcp.ToolHandlerFor[*structs.MovimentacaoR
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.MovimentacaoRequest,
 	) (*mcp.CallToolResult, any, error) {
-		id_transacao, err := api.CriarMovimentacao(ctx, input)
+		id_transacao, err := api.CreateNewTransaction(ctx, input)
 		if err != nil {
 			return &mcp.CallToolResult{
 				Content: []mcp.Content{
@@ -34,7 +34,7 @@ func ToolMcpListarMovimentacoes(api *www.API) mcp.ToolHandlerFor[*structs.Listar
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.ListarMovimentacoesRequest,
 	) (*mcp.CallToolResult, any, error) {
-		movimentacoes, err := api.ListarMovimentacoes(ctx, input)
+		movimentacoes, err := api.FetchTransactions(ctx, input)
 		if err != nil {
 			return &mcp.CallToolResult{
 				Content: []mcp.Content{
