@@ -13,7 +13,7 @@ import (
 )
 
 func (api *API) CreateNewTransaction(
-	ctx context.Context, movimentacao *structs.MovimentacaoRequest,
+	ctx context.Context, movimentacao *structs.DespesasUnicaRequest,
 ) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
@@ -52,14 +52,14 @@ func (api *API) CreateNewTransaction(
 }
 
 func (api *API) FetchTransactions(
-	ctx context.Context, params *structs.ListarMovimentacoesRequest,
-) ([]structs.ListarMovimentacoesResponse, error) {
+	ctx context.Context, params *structs.DespesasListarRequest,
+) ([]structs.DespesasListarResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	url, err := url.Parse(api.baseURL + "/rest/v1/movimentacao")
 	if err != nil {
-		return []structs.ListarMovimentacoesResponse{}, fmt.Errorf("parsing base URL: %w", err)
+		return []structs.DespesasListarResponse{}, fmt.Errorf("parsing base URL: %w", err)
 	}
 
 	query := url.Query()
@@ -73,26 +73,26 @@ func (api *API) FetchTransactions(
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), nil)
 	if err != nil {
-		return []structs.ListarMovimentacoesResponse{}, fmt.Errorf("montando request: %w", err)
+		return []structs.DespesasListarResponse{}, fmt.Errorf("montando request: %w", err)
 	}
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.token))
 	req.Header.Set("Apikey", api.apiKey)
 
 	resp, err := api.client.Do(req)
 	if err != nil {
-		return []structs.ListarMovimentacoesResponse{}, fmt.Errorf("chamando api de autenticação: %w", err)
+		return []structs.DespesasListarResponse{}, fmt.Errorf("chamando api de autenticação: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		corpoErro, _ := io.ReadAll(io.LimitReader(resp.Body, 4096)) // limita leitura de corpo de erro
-		return []structs.ListarMovimentacoesResponse{}, fmt.Errorf("api retornou %d: %s", resp.StatusCode, corpoErro)
+		return []structs.DespesasListarResponse{}, fmt.Errorf("api retornou %d: %s", resp.StatusCode, corpoErro)
 	}
 
-	var movimentacoes []structs.ListarMovimentacoesResponse
+	var movimentacoes []structs.DespesasListarResponse
 	err = json.NewDecoder(resp.Body).Decode(&movimentacoes)
 	if err != nil {
-		return []structs.ListarMovimentacoesResponse{}, fmt.Errorf("decodificando resposta: %w", err)
+		return []structs.DespesasListarResponse{}, fmt.Errorf("decodificando resposta: %w", err)
 	}
 
 	return movimentacoes, nil

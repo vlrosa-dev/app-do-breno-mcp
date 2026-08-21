@@ -9,9 +9,9 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-func ToolCreateTransaction(api *www.API) mcp.ToolHandlerFor[*structs.MovimentacaoRequest, any] {
+func ToolCreateTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.MovimentacaoRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaRequest,
 	) (*mcp.CallToolResult, any, error) {
 		id_transacao, err := api.CreateNewTransaction(ctx, input)
 		if err != nil {
@@ -30,9 +30,9 @@ func ToolCreateTransaction(api *www.API) mcp.ToolHandlerFor[*structs.Movimentaca
 	}
 }
 
-func ToolFetchTransactions(api *www.API) mcp.ToolHandlerFor[*structs.ListarMovimentacoesRequest, any] {
+func ToolFetchTransactions(api *www.API) mcp.ToolHandlerFor[*structs.DespesasListarRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.ListarMovimentacoesRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasListarRequest,
 	) (*mcp.CallToolResult, any, error) {
 		movimentacoes, err := api.FetchTransactions(ctx, input)
 		if err != nil {
@@ -60,11 +60,11 @@ func ToolFetchTransactions(api *www.API) mcp.ToolHandlerFor[*structs.ListarMovim
 	}
 }
 
-func ToolDeleteTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DeleteTransactionRequest, any] {
+func ToolDeleteTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DespesasUnicaDeleteRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DeleteTransactionRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
-		err := api.DeleteTransaction(ctx, input.MovimentacaoID)
+		err := api.DeleteTransaction(ctx, "")
 		if err != nil {
 			return &mcp.CallToolResult{
 				Content: []mcp.Content{
