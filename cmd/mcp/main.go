@@ -4,6 +4,7 @@ import (
 	"app-do-breno-agent/internal/api"
 	"app-do-breno-agent/internal/clients"
 	"app-do-breno-agent/internal/config"
+	"app-do-breno-agent/internal/structs"
 	"context"
 	"log"
 
@@ -29,13 +30,25 @@ func main() {
 		config.APIUsername,
 		config.APIPassword,
 	)
-	log.Println("apiToken:", token.AccessToken)
+	// log.Println("apiToken:", token.AccessToken)
 	api.SetToken(token.AccessToken)
 	userInfo, err := api.GetUserInfo(
 		context.Background(),
 	)
 	log.Println("userID:", userInfo.ID)
 	api.SetUserId(userInfo.ID)
+
+	list, _ := api.ListExpenses(
+		context.Background(),
+		structs.DespesasListarRequest{
+			Select:      "*",
+			UserId:      userInfo.ID,
+			Tipo:        "Diario",
+			DataInicial: "2026-08-01",
+			DataFinal:   "2026-09-01",
+		},
+	)
+	log.Println(list)
 
 	// server := mcp.NewServer(&mcp.Implementation{
 	// 	Name:    "app-do-breno-mcp",
