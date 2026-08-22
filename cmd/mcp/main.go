@@ -38,17 +38,29 @@ func main() {
 	log.Println("userID:", userInfo.ID)
 	api.SetUserId(userInfo.ID)
 
-	list, _ := api.ListExpenses(
+	api.CreateExpenseOne(
 		context.Background(),
-		structs.DespesasListarRequest{
-			Select:      "*",
-			UserId:      userInfo.ID,
-			Tipo:        "Diario",
-			DataInicial: "2026-08-01",
-			DataFinal:   "2026-09-01",
+		&structs.DespesasUnicaRequest{
+			Data:      "2026-08-22",
+			Descricao: "Teste 2",
+			TagIds:    []int{},
+			Tipo:      "Diario",
+			User:      userInfo.ID,
+			Valor:     1.50,
 		},
 	)
-	log.Println(list)
+
+	// list, _ := api.ListExpenses(
+	// 	context.Background(),
+	// 	structs.DespesasListarRequest{
+	// 		Select:      "*",
+	// 		UserId:      userInfo.ID,
+	// 		Tipo:        "Diario",
+	// 		DataInicial: "2026-08-01",
+	// 		DataFinal:   "2026-09-01",
+	// 	},
+	// )
+	// log.Println(list)
 
 	// server := mcp.NewServer(&mcp.Implementation{
 	// 	Name:    "app-do-breno-mcp",

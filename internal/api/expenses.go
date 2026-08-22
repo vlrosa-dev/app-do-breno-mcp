@@ -36,7 +36,7 @@ func (api *API) CreateExpenseOne(ctx context.Context, obj *structs.DespesasUnica
 		api.client,
 		ctx,
 		fullUrl,
-		http.MethodGet,
+		string(http.MethodPost),
 		headers,
 		params,
 		body,
