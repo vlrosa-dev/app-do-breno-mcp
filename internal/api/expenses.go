@@ -193,7 +193,7 @@ func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.Des
 	return nil
 }
 
-func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequest) (structs.DespesasListarResponse, error) {
+func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequest) ([]structs.DespesasListarResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -212,7 +212,7 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 	params.Add("data", fmt.Sprintf("lt.%s", obj.DataFinal))
 	params.Add("order", "data.desc, created_at.desc")
 
-	var despesas structs.DespesasListarResponse
+	var despesas []structs.DespesasListarResponse
 	resp, err := helpers.MakeHTTPRequest(
 		api.client,
 		ctx,
@@ -224,7 +224,7 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 		despesas,
 	)
 	if err != nil {
-		return structs.DespesasListarResponse{}, fmt.Errorf("request error, msg: %v", err.Error())
+		return []structs.DespesasListarResponse{}, fmt.Errorf("request error, msg: %v", err.Error())
 	}
 
 	return resp, err

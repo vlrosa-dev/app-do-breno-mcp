@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -31,14 +30,8 @@ func MakeHTTPRequest[T any](
 		return responseType, err
 	}
 
-	// if it's a GET, we need to append the query parameters.
-	q := u.Query()
-	for k, v := range queryParameters {
-		// this depends on the type of api, you may need to do it for each of v
-		q.Set(k, strings.Join(v, ","))
-	}
 	// set the query to the encoded parameters
-	u.RawQuery = q.Encode()
+	u.RawQuery = queryParameters.Encode()
 
 	// regardless of GET or POST, we can safely add the body
 	req, err := http.NewRequestWithContext(ctx, httpMethod, u.String(), body)
