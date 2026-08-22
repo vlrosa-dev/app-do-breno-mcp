@@ -12,8 +12,9 @@ import (
 	"net/url"
 )
 
-func (api *API) GetToken(ctx context.Context, email, password string) (structs.AuthResponse, error) {
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/auth/v1/token")
+func GetToken(ctx context.Context, c *http.Client, baseURL, apiKey, email, password string) (structs.AuthResponse, error) {
+	client := c
+	fullUrl := fmt.Sprintf("%s%s", baseURL, "/auth/v1/token")
 
 	u, err := url.Parse(fullUrl)
 	if err != nil {
@@ -39,11 +40,11 @@ func (api *API) GetToken(ctx context.Context, email, password string) (structs.A
 	if err != nil {
 		return structs.AuthResponse{}, err
 	}
-	req.Header.Add("Authorization", "Bearer "+api.apiKey)
-	req.Header.Add("ApiKey", api.apiKey)
+	req.Header.Add("Authorization", "Bearer "+apiKey)
+	req.Header.Add("ApiKey", apiKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	res, err := api.client.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
 		return structs.AuthResponse{}, err
 	}

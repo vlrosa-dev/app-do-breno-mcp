@@ -1,6 +1,8 @@
 package api
 
 import (
+	"context"
+	"log"
 	"net/http"
 )
 
@@ -12,11 +14,24 @@ type API struct {
 	userId  string
 }
 
-func NewAPI(baseURL, apiKey string, client *http.Client) *API {
+func NewAPI(baseURL, apiKey string, client *http.Client, email, password string) *API {
+	auth, err := GetToken(
+		context.Background(),
+		client,
+		baseURL,
+		apiKey,
+		email,
+		password,
+	)
+	if err != nil {
+		log.Fatalf("erro authenticate client API, msg: %v", err.Error())
+	}
+
 	return &API{
 		baseURL: baseURL,
 		apiKey:  apiKey,
 		client:  client,
+		token:   auth.AccessToken,
 	}
 }
 

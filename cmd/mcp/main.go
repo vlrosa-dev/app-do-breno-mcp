@@ -4,7 +4,6 @@ import (
 	"app-do-breno-agent/internal/api"
 	"app-do-breno-agent/internal/clients"
 	"app-do-breno-agent/internal/config"
-	"context"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -19,18 +18,20 @@ func main() {
 
 	apiClient := clients.NewApiClient()
 
-	api := api.NewAPI(
+	_ = api.NewAPI(
 		config.APIBaseURL,
 		config.APIKey,
 		apiClient,
-	)
-	token, err := api.GetToken(
-		context.Background(),
 		config.APIUsername,
 		config.APIPassword,
 	)
-	log.Println("apiToken:", token.AccessToken)
-	api.SetToken(token.AccessToken)
+	// token, err := api.GetToken(
+	// 	context.Background(),
+	// 	config.APIUsername,
+	// 	config.APIPassword,
+	// )
+	// log.Println("apiToken:", token.AccessToken)
+	// api.SetToken(token.AccessToken)
 	// userInfo, err := api.GetUserInfo(
 	// 	context.Background(),
 	// )
