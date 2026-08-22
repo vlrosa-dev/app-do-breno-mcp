@@ -4,7 +4,6 @@ import (
 	"app-do-breno-agent/internal/api"
 	"app-do-breno-agent/internal/clients"
 	"app-do-breno-agent/internal/config"
-	"app-do-breno-agent/internal/structs"
 	"context"
 	"log"
 
@@ -30,25 +29,25 @@ func main() {
 		config.APIUsername,
 		config.APIPassword,
 	)
-	// log.Println("apiToken:", token.AccessToken)
+	log.Println("apiToken:", token.AccessToken)
 	api.SetToken(token.AccessToken)
-	userInfo, err := api.GetUserInfo(
-		context.Background(),
-	)
-	log.Println("userID:", userInfo.ID)
-	api.SetUserId(userInfo.ID)
+	// userInfo, err := api.GetUserInfo(
+	// 	context.Background(),
+	// )
+	// log.Println("userID:", userInfo.ID)
+	// api.SetUserId(userInfo.ID)
 
-	api.CreateExpenseOne(
-		context.Background(),
-		&structs.DespesasUnicaRequest{
-			Data:      "2026-08-22",
-			Descricao: "Teste 2",
-			TagIds:    []int{},
-			Tipo:      "Diario",
-			User:      userInfo.ID,
-			Valor:     1.50,
-		},
-	)
+	// api.CreateExpenseOne(
+	// 	context.Background(),
+	// 	&structs.DespesasUnicaRequest{
+	// 		Data:      "2026-08-22",
+	// 		Descricao: "Teste 2",
+	// 		TagIds:    []int{},
+	// 		Tipo:      "Diario",
+	// 		User:      userInfo.ID,
+	// 		Valor:     1.50,
+	// 	},
+	// )
 
 	// list, _ := api.ListExpenses(
 	// 	context.Background(),

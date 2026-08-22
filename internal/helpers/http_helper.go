@@ -72,17 +72,12 @@ func MakeHTTPRequest[T any](
 	}
 
 	var responseObject T
-	// some endpoints (e.g. rpc calls) return a raw string body (like a UUID)
-	// instead of JSON, so json.Unmarshal would fail on it — assign it directly.
-	if s, ok := any(&responseObject).(*string); ok {
-		*s = string(responseData)
-		return responseObject, nil
-	}
-
-	err = json.Unmarshal(responseData, &responseObject)
-	if err != nil {
-		log.Printf("error unmarshaling response: %+v", err)
-		return responseType, err
+	if json.Valid(responseData) {
+		err = json.Unmarshal(responseData, &responseObject)
+		if err != nil {
+			log.Printf("error unmarshaling response: %+v", err)
+			return responseType, err
+		}
 	}
 
 	return responseObject, nil
