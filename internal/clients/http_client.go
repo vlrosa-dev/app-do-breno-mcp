@@ -1,10 +1,14 @@
-package www
+package clients
 
 import (
 	"net"
 	"net/http"
 	"time"
 )
+
+type HttpClient struct {
+	client *http.Client
+}
 
 func NewApiClient() *http.Client {
 	transport := &http.Transport{

@@ -1,4 +1,4 @@
-package www
+package api
 
 import (
 	"app-do-breno-agent/internal/structs"

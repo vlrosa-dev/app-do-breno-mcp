@@ -1,9 +1,10 @@
 package main
 
 import (
+	"app-do-breno-agent/internal/api"
+	"app-do-breno-agent/internal/clients"
 	"app-do-breno-agent/internal/config"
 	"app-do-breno-agent/internal/tools"
-	"app-do-breno-agent/internal/www"
 	"context"
 	"log"
 
@@ -18,9 +19,9 @@ func main() {
 	}
 	config := config.Load()
 
-	apiClient := www.NewApiClient()
+	apiClient := clients.NewApiClient()
 
-	api := www.NewAPI(
+	api := api.NewAPI(
 		config.APIBaseURL,
 		config.APIKey,
 		apiClient,

@@ -1,15 +1,15 @@
 package tools
 
 import (
+	"app-do-breno-agent/internal/api"
 	"app-do-breno-agent/internal/structs"
-	"app-do-breno-agent/internal/www"
 	"context"
 	"encoding/json"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-func ToolCreateTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
+func ToolCreateTransaction(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -30,7 +30,7 @@ func ToolCreateTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DespesasUni
 	}
 }
 
-func ToolFetchTransactions(api *www.API) mcp.ToolHandlerFor[*structs.DespesasListarRequest, any] {
+func ToolFetchTransactions(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasListarRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -60,7 +60,7 @@ func ToolFetchTransactions(api *www.API) mcp.ToolHandlerFor[*structs.DespesasLis
 	}
 }
 
-func ToolDeleteTransaction(api *www.API) mcp.ToolHandlerFor[*structs.DespesasUnicaDeleteRequest, any] {
+func ToolDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaDeleteRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
