@@ -5,6 +5,7 @@ import (
 	"app-do-breno-agent/internal/structs"
 	"context"
 	"encoding/json"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -37,9 +38,17 @@ func ToolCreateExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnic
 	) (*mcp.CallToolResult, any, error) {
 		input.User = api.UserID
 
-		if input.Tipo != "diario" && input.Tipo != "saida" && input.Tipo != "economia" && input.Tipo != "entrada" {
+		tipoDespesa := strings.ToUpper(input.Tipo)
+		validTipos := map[string]bool{
+			"DIARIO":   true,
+			"SAIDA":    true,
+			"ECONOMIA": true,
+			"ENTRADA":  true,
+			"CARTAO":   true,
+		}
+		if !validTipos[tipoDespesa] {
 			return textResult(
-				"tipo invalido, valores esperados: diario, saida, economia ou entrada",
+				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
 			), nil, nil
 		}
 		id, err := api.CreateExpenseOne(ctx, input)
