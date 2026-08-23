@@ -148,7 +148,9 @@ func ToolDeleteExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		if err := api.DeleteExpensesRecurrency(ctx, *input); err != nil {
-			return textResult("Unable to delete recurring transactions."), nil, nil
+			return textResult(
+				fmt.Sprintf("Unable to delete recurring transactions, msg: %v", err.Error()),
+			), nil, nil
 		}
 		return textResult("Recurring transactions deleted successfully."), nil, nil
 	}
@@ -160,7 +162,9 @@ func ToolDeleteExpensesRecurrencyAll(api *api.API) mcp.ToolHandlerFor[*structs.D
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		if err := api.DeleteExpensesRecurrencyAll(ctx, *input); err != nil {
-			return textResult("Unable to delete all recurring transactions."), nil, nil
+			return textResult(
+				fmt.Sprintf("Unable to delete all recurring transactions, msg: %v", err.Error()),
+			), nil, nil
 		}
 		return textResult("All recurring transactions deleted successfully."), nil, nil
 	}
