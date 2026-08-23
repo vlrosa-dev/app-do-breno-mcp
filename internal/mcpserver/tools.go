@@ -39,14 +39,14 @@ func ToolCreateExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnic
 		input.User = api.UserID
 
 		tipoDespesa := strings.ToUpper(input.Tipo)
-		validTipos := map[string]bool{
+		opcoesDespesas := map[string]bool{
 			"DIARIO":   true,
 			"SAIDA":    true,
 			"ECONOMIA": true,
 			"ENTRADA":  true,
 			"CARTAO":   true,
 		}
-		if !validTipos[tipoDespesa] {
+		if !opcoesDespesas[tipoDespesa] {
 			return textResult(
 				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
 			), nil, nil
@@ -76,6 +76,44 @@ func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrenteRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
+
+		opcoesFrequencia := map[string]bool{
+			"mensalmente":  true,
+			"semanalmente": true,
+			"diariamente":  true,
+			"parcelado":    true,
+		}
+		if !opcoesFrequencia[input.Frequencia] {
+			return textResult(
+				"tipo invalido, valores esperados: mensalmente, semanalmente, diariamente ou parcelado",
+			), nil, nil
+		}
+
+		opcoesPeriodicidadeRecorrencia := map[string]bool{
+			"Mensalmente":  true,
+			"Semanalmente": true,
+			"Diariamente":  true,
+			"Parcelado":    true,
+		}
+		if !opcoesPeriodicidadeRecorrencia[input.PeriodicidadeRecorrencia] {
+			return textResult(
+				"tipo invalido, valores esperados: Mensalmente, Semanalmente, Diariamente ou Parcelado",
+			), nil, nil
+		}
+
+		opcoesDespesas := map[string]bool{
+			"Diario":   true,
+			"Saida":    true,
+			"Economia": true,
+			"Entrada":  true,
+			"Cartao":   true,
+		}
+		if !opcoesDespesas[input.Tipo] {
+			return textResult(
+				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
+			), nil, nil
+		}
+
 		if err := api.CreateExpensesRecurrency(ctx, *input); err != nil {
 			return textResult("Unable to create recurring transaction."), nil, nil
 		}
