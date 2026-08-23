@@ -36,6 +36,12 @@ func ToolCreateExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnic
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.User = api.UserID
+
+		if input.Tipo != "diario" && input.Tipo != "saida" && input.Tipo != "economia" && input.Tipo != "entrada" {
+			return textResult(
+				"tipo invalido, valores esperados: diario, saida, economia ou entrada",
+			), nil, nil
+		}
 		id, err := api.CreateExpenseOne(ctx, input)
 		if err != nil {
 			return textResult("Unable to create transaction."), nil, nil
