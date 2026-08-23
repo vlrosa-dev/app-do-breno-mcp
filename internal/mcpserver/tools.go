@@ -346,6 +346,6 @@ func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.De
 			return textResult("Unable to fetch transaction by id."), nil, nil
 		}
 		result, err := jsonResult(response)
-		return result, response, err
+		return result, listResult[structs.DespesasListarResponse]{Items: response}, err
 	}
 }
