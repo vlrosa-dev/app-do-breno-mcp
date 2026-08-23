@@ -33,6 +33,9 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			- Entrada 	— receitas recebidas
 			- Economia 	— valor economizado/poupado
 		`,
+		Capabilities: &mcp.ServerCapabilities{
+			Tools: &mcp.ToolCapabilities{},
+		},
 	}
 
 	server := mcp.NewServer(implementation, options)
