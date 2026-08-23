@@ -51,14 +51,23 @@ func main() {
 	// 	log.Println("err: ", err.Error())
 	// }
 
-	list, _ := api.ListExpenses(
+	// list, _ := api.ListExpenses(
+	// 	context.Background(),
+	// 	structs.DespesasListarRequest{
+	// 		Select:      "*",
+	// 		UserId:      api.UserID,
+	// 		Tipo:        "Diario",
+	// 		DataInicial: "2026-08-01",
+	// 		DataFinal:   "2026-09-01",
+	// 	},
+	// )
+	// log.Println(list)
+
+	list, _ := api.ListResultstMonthly(
 		context.Background(),
-		structs.DespesasListarRequest{
-			Select:      "*",
-			UserId:      api.UserID,
-			Tipo:        "Diario",
-			DataInicial: "2026-08-01",
-			DataFinal:   "2026-09-01",
+		structs.TotaisMesListRequest{
+			MesInput:  "2026-09-01",
+			UserInput: api.UserID,
 		},
 	)
 	log.Println(list)

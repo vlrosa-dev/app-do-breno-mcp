@@ -85,6 +85,11 @@ type TotaisAnoEconomizadoResponse struct {
 }
 
 type TotaisDiarioMedioAnoRequest struct {
+	Ano    string `json:"p_ano"`
+	UserId string `json:"p_user_id"`
+}
+
+type TotaisDiarioMedioAnoResponse struct {
 	Ano        int64 `json:"ano"`
 	MesesNoAno int64 `json:"meses_no_ano"`
 	Cabecalho  struct {
