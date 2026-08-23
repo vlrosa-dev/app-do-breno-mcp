@@ -26,12 +26,28 @@ func NewAPI(baseURL, apiKey string, client *http.Client, email, password string)
 	if err != nil {
 		log.Fatalf("erro authenticate client API, msg: %v", err.Error())
 	}
+	token := auth.AccessToken
+	log.Println("Token: ", token[:30])
+
+	user, err := GetUser(
+		context.Background(),
+		client,
+		baseURL,
+		token,
+		apiKey,
+	)
+	if err != nil {
+		log.Fatalf("erro get user info, msg: %v", err.Error())
+	}
+	userId := user.ID
+	log.Println("UserID: ", userId)
 
 	return &API{
 		baseURL: baseURL,
 		apiKey:  apiKey,
 		client:  client,
-		token:   auth.AccessToken,
+		token:   token,
+		userId:  userId,
 	}
 }
 
