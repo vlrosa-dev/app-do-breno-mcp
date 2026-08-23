@@ -113,14 +113,10 @@ func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.Despes
 	defer cancel()
 
 	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/criar_movimentacoes_repetidas_v2")
-
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.ApiToken,
-		"ApiKey":        api.ApiKey,
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return err
 	}
-
-	params := url.Values{}
 
 	bodyStruct, err := json.Marshal(obj)
 	if err != nil {
@@ -128,18 +124,33 @@ func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.Despes
 	}
 	body := bytes.NewReader(bodyStruct)
 
-	_, err = helpers.MakeHTTPRequest(
-		api.Client,
-		ctx,
-		fullUrl,
-		http.MethodPost,
-		headers,
-		params,
-		body,
-		struct{}{},
-	)
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
 	if err != nil {
-		return fmt.Errorf("request error, msg: %v", err.Error())
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		return fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNoContent {
+		return fmt.Errorf(
+			"error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData,
+		)
 	}
 
 	return nil
@@ -150,14 +161,10 @@ func (api *API) DeleteExpensesRecurrency(ctx context.Context, obj structs.Despes
 	defer cancel()
 
 	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/serie_delete_from")
-
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.ApiToken,
-		"ApiKey":        api.ApiKey,
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return err
 	}
-
-	params := url.Values{}
 
 	bodyStruct, err := json.Marshal(obj)
 	if err != nil {
@@ -165,18 +172,33 @@ func (api *API) DeleteExpensesRecurrency(ctx context.Context, obj structs.Despes
 	}
 	body := bytes.NewReader(bodyStruct)
 
-	_, err = helpers.MakeHTTPRequest(
-		api.Client,
-		ctx,
-		fullUrl,
-		http.MethodPost,
-		headers,
-		params,
-		body,
-		struct{}{},
-	)
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
 	if err != nil {
-		return fmt.Errorf("request error, msg: %v", err.Error())
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		return fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNoContent {
+		return fmt.Errorf(
+			"error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData,
+		)
 	}
 
 	return nil
