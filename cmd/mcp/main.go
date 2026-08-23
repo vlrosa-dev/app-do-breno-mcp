@@ -4,6 +4,8 @@ import (
 	"app-do-breno-agent/internal/api"
 	"app-do-breno-agent/internal/clients"
 	"app-do-breno-agent/internal/config"
+	"app-do-breno-agent/internal/structs"
+	"context"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -18,37 +20,36 @@ func main() {
 
 	apiClient := clients.NewApiClient()
 
-	_ = api.NewAPI(
+	api := api.NewAPI(
 		config.APIBaseURL,
 		config.APIKey,
 		apiClient,
 		config.APIUsername,
 		config.APIPassword,
 	)
-	// token, err := api.GetToken(
-	// 	context.Background(),
-	// 	config.APIUsername,
-	// 	config.APIPassword,
-	// )
-	// log.Println("apiToken:", token.AccessToken)
-	// api.SetToken(token.AccessToken)
-	// userInfo, err := api.GetUserInfo(
-	// 	context.Background(),
-	// )
-	// log.Println("userID:", userInfo.ID)
-	// api.SetUserId(userInfo.ID)
-
-	// api.CreateExpenseOne(
+	// id, _ := api.CreateExpenseOne(
 	// 	context.Background(),
 	// 	&structs.DespesasUnicaRequest{
-	// 		Data:      "2026-08-22",
-	// 		Descricao: "Teste 2",
+	// 		Data:      "2026-08-23",
+	// 		Descricao: "Teste 3",
 	// 		TagIds:    []int{},
 	// 		Tipo:      "Diario",
-	// 		User:      userInfo.ID,
+	// 		User:      api.UserID,
 	// 		Valor:     1.50,
 	// 	},
 	// )
+	// log.Println("ID: ", id)
+
+	err = api.DeleteExpenseOne(
+		context.Background(),
+		&structs.DespesasUnicaDeleteRequest{
+			Id:     "966c852d-fe45-4ca4-a623-876cff8a2db5",
+			UserId: api.UserID,
+		},
+	)
+	if err != nil {
+		log.Println("err: ", err.Error())
+	}
 
 	// list, _ := api.ListExpenses(
 	// 	context.Background(),

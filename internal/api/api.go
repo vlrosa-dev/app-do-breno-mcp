@@ -7,11 +7,11 @@ import (
 )
 
 type API struct {
-	baseURL string
-	client  *http.Client
-	token   string
-	apiKey  string
-	userId  string
+	BaseUrl  string
+	Client   *http.Client
+	ApiToken string
+	ApiKey   string
+	UserID   string
 }
 
 func NewAPI(baseURL, apiKey string, client *http.Client, email, password string) *API {
@@ -43,18 +43,10 @@ func NewAPI(baseURL, apiKey string, client *http.Client, email, password string)
 	log.Println("UserID: ", userId)
 
 	return &API{
-		baseURL: baseURL,
-		apiKey:  apiKey,
-		client:  client,
-		token:   token,
-		userId:  userId,
+		BaseUrl:  baseURL,
+		ApiKey:   apiKey,
+		Client:   client,
+		ApiToken: token,
+		UserID:   userId,
 	}
-}
-
-func (api *API) SetToken(token string) {
-	api.token = token
-}
-
-func (api *API) SetUserId(userId string) {
-	api.userId = userId
 }

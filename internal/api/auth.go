@@ -12,8 +12,7 @@ import (
 	"net/url"
 )
 
-func GetToken(ctx context.Context, c *http.Client, baseURL, apiKey, email, password string) (structs.AuthResponse, error) {
-	client := c
+func GetToken(ctx context.Context, client *http.Client, baseURL, apiKey, email, password string) (structs.AuthResponse, error) {
 	fullUrl := fmt.Sprintf("%s%s", baseURL, "/auth/v1/token")
 
 	u, err := url.Parse(fullUrl)

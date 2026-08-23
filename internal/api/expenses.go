@@ -7,76 +7,102 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
 )
 
-func (api *API) CreateExpenseOne(ctx context.Context, obj *structs.DespesasUnicaRequest) error {
+func (api *API) CreateExpenseOne(ctx context.Context, obj *structs.DespesasUnicaRequest) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/rest/v1/rpc/movimentacao_create_with_tags_v2")
-
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.token,
-		"ApiKey":        api.apiKey,
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/movimentacao_create_with_tags_v2")
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return "", err
 	}
-
-	params := url.Values{}
 
 	bodyStruct, err := json.Marshal(obj)
 	if err != nil {
-		return fmt.Errorf("serializando payload: %w", err)
+		return "", fmt.Errorf("serializando payload: %w", err)
 	}
 	body := bytes.NewReader(bodyStruct)
 
-	_, err = helpers.MakeHTTPRequest(
-		api.client,
-		ctx,
-		fullUrl,
-		http.MethodPost,
-		headers,
-		params,
-		body,
-		struct{}{},
-	)
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
 	if err != nil {
-		return fmt.Errorf("request error, msg: %v", err.Error())
+		return "", err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return "", err
 	}
 
-	return nil
+	if res == nil {
+		return "", fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
+		log.Println(msgError)
+		return "", msgError
+	}
+
+	return string(responseData), nil
 }
 
-func (api *API) DeleteExpenseOne(ctx context.Context, obj structs.DespesasUnicaDeleteRequest) error {
+func (api *API) DeleteExpenseOne(ctx context.Context, obj *structs.DespesasUnicaDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/rest/v1/movimentacao")
-
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.token,
-		"ApiKey":        api.apiKey,
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/movimentacao")
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return err
 	}
 
 	params := url.Values{}
 	params.Add("id", fmt.Sprintf("eq.%s", obj.Id))
 	params.Add("user_id", fmt.Sprintf("eq.%s", obj.UserId))
+	u.RawQuery = params.Encode()
 
-	_, err := helpers.MakeHTTPRequest(
-		api.client,
-		ctx,
-		fullUrl,
-		http.MethodDelete,
-		headers,
-		params,
-		nil,
-		struct{}{},
-	)
+	req, err := http.NewRequestWithContext(ctx, "DELETE", u.String(), nil)
 	if err != nil {
-		return fmt.Errorf("request error, msg: %v", err.Error())
+		return err
+	}
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		return fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNoContent {
+		return fmt.Errorf(
+			"error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData,
+		)
 	}
 
 	return nil
@@ -86,12 +112,12 @@ func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.Despes
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/rest/v1/rpc/criar_movimentacoes_repetidas_v2")
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/criar_movimentacoes_repetidas_v2")
 
 	headers := map[string]string{
 		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.token,
-		"ApiKey":        api.apiKey,
+		"Authorization": "Bearer " + api.ApiToken,
+		"ApiKey":        api.ApiKey,
 	}
 
 	params := url.Values{}
@@ -103,7 +129,7 @@ func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.Despes
 	body := bytes.NewReader(bodyStruct)
 
 	_, err = helpers.MakeHTTPRequest(
-		api.client,
+		api.Client,
 		ctx,
 		fullUrl,
 		http.MethodPost,
@@ -123,12 +149,12 @@ func (api *API) DeleteExpensesRecurrency(ctx context.Context, obj structs.Despes
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/rest/v1/rpc/serie_delete_from")
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/serie_delete_from")
 
 	headers := map[string]string{
 		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.token,
-		"ApiKey":        api.apiKey,
+		"Authorization": "Bearer " + api.ApiToken,
+		"ApiKey":        api.ApiKey,
 	}
 
 	params := url.Values{}
@@ -140,7 +166,7 @@ func (api *API) DeleteExpensesRecurrency(ctx context.Context, obj structs.Despes
 	body := bytes.NewReader(bodyStruct)
 
 	_, err = helpers.MakeHTTPRequest(
-		api.client,
+		api.Client,
 		ctx,
 		fullUrl,
 		http.MethodPost,
@@ -160,12 +186,12 @@ func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.Des
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/rest/v1/rpc/serie_delete_all")
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/serie_delete_all")
 
 	headers := map[string]string{
 		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.token,
-		"ApiKey":        api.apiKey,
+		"Authorization": "Bearer " + api.ApiToken,
+		"ApiKey":        api.ApiKey,
 	}
 
 	params := url.Values{}
@@ -177,7 +203,7 @@ func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.Des
 	body := bytes.NewReader(bodyStruct)
 
 	_, err = helpers.MakeHTTPRequest(
-		api.client,
+		api.Client,
 		ctx,
 		fullUrl,
 		http.MethodPost,
@@ -197,11 +223,11 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	fullUrl := fmt.Sprintf("%s%s", api.baseURL, "/rest/v1/view_movimentacao_all")
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/view_movimentacao_all")
 
 	headers := map[string]string{
-		"Authorization": "Bearer " + api.token,
-		"ApiKey":        api.apiKey,
+		"Authorization": "Bearer " + api.ApiToken,
+		"ApiKey":        api.ApiKey,
 	}
 
 	params := url.Values{}
@@ -214,7 +240,7 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 
 	var despesas []structs.DespesasListarResponse
 	resp, err := helpers.MakeHTTPRequest(
-		api.client,
+		api.Client,
 		ctx,
 		fullUrl,
 		http.MethodGet,
