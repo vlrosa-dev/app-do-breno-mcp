@@ -1,7 +1,6 @@
 package api
 
 import (
-	"app-do-breno-agent/internal/helpers"
 	"app-do-breno-agent/internal/structs"
 	"bytes"
 	"context"
@@ -209,14 +208,10 @@ func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.Des
 	defer cancel()
 
 	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/serie_delete_all")
-
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + api.ApiToken,
-		"ApiKey":        api.ApiKey,
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return err
 	}
-
-	params := url.Values{}
 
 	bodyStruct, err := json.Marshal(obj)
 	if err != nil {
@@ -224,18 +219,33 @@ func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.Des
 	}
 	body := bytes.NewReader(bodyStruct)
 
-	_, err = helpers.MakeHTTPRequest(
-		api.Client,
-		ctx,
-		fullUrl,
-		http.MethodPost,
-		headers,
-		params,
-		body,
-		struct{}{},
-	)
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
 	if err != nil {
-		return fmt.Errorf("request error, msg: %v", err.Error())
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		return fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNoContent {
+		return fmt.Errorf(
+			"error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData,
+		)
 	}
 
 	return nil
@@ -246,10 +256,9 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 	defer cancel()
 
 	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/view_movimentacao_all")
-
-	headers := map[string]string{
-		"Authorization": "Bearer " + api.ApiToken,
-		"ApiKey":        api.ApiKey,
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
 	}
 
 	params := url.Values{}
@@ -259,21 +268,43 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 	params.Add("data", fmt.Sprintf("gte.%s", obj.DataInicial))
 	params.Add("data", fmt.Sprintf("lt.%s", obj.DataFinal))
 	params.Add("order", "data.desc, created_at.desc")
+	u.RawQuery = params.Encode()
 
-	var despesas []structs.DespesasListarResponse
-	resp, err := helpers.MakeHTTPRequest(
-		api.Client,
-		ctx,
-		fullUrl,
-		http.MethodGet,
-		headers,
-		params,
-		nil,
-		despesas,
-	)
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), nil)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, fmt.Errorf("request error, msg: %v", err.Error())
+		return []structs.DespesasListarResponse{}, err
+	}
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
 	}
 
-	return resp, err
+	if res == nil {
+		return []structs.DespesasListarResponse{}, fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
+		log.Println(msgError)
+		return []structs.DespesasListarResponse{}, msgError
+	}
+
+	var despesasResponse []structs.DespesasListarResponse
+	err = json.Unmarshal(responseData, &despesasResponse)
+	if err != nil {
+		log.Printf("error unmarshaling response: %+v", err)
+		return []structs.DespesasListarResponse{}, err
+	}
+
+	return despesasResponse, nil
 }
