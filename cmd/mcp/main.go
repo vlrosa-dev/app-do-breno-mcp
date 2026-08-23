@@ -40,28 +40,28 @@ func main() {
 	// )
 	// log.Println("ID: ", id)
 
-	err = api.DeleteExpenseOne(
-		context.Background(),
-		&structs.DespesasUnicaDeleteRequest{
-			Id:     "966c852d-fe45-4ca4-a623-876cff8a2db5",
-			UserId: api.UserID,
-		},
-	)
-	if err != nil {
-		log.Println("err: ", err.Error())
-	}
-
-	// list, _ := api.ListExpenses(
+	// err = api.DeleteExpenseOne(
 	// 	context.Background(),
-	// 	structs.DespesasListarRequest{
-	// 		Select:      "*",
-	// 		UserId:      userInfo.ID,
-	// 		Tipo:        "Diario",
-	// 		DataInicial: "2026-08-01",
-	// 		DataFinal:   "2026-09-01",
+	// 	&structs.DespesasUnicaDeleteRequest{
+	// 		Id:     "966c852d-fe45-4ca4-a623-876cff8a2db5",
+	// 		UserId: api.UserID,
 	// 	},
 	// )
-	// log.Println(list)
+	// if err != nil {
+	// 	log.Println("err: ", err.Error())
+	// }
+
+	list, _ := api.ListExpenses(
+		context.Background(),
+		structs.DespesasListarRequest{
+			Select:      "*",
+			UserId:      api.UserID,
+			Tipo:        "Diario",
+			DataInicial: "2026-08-01",
+			DataFinal:   "2026-09-01",
+		},
+	)
+	log.Println(list)
 
 	// server := mcp.NewServer(&mcp.Implementation{
 	// 	Name:    "app-do-breno-mcp",

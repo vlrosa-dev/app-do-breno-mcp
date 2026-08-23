@@ -270,7 +270,7 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 	params.Add("order", "data.desc, created_at.desc")
 	u.RawQuery = params.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
 	if err != nil {
 		return []structs.DespesasListarResponse{}, err
 	}
