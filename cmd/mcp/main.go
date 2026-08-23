@@ -6,16 +6,19 @@ import (
 	"app-do-breno-agent/internal/config"
 	"app-do-breno-agent/internal/mcpserver"
 	"context"
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
 func main() {
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logger.Error("Error loading .env file")
 	}
 	config := config.Load()
 
@@ -30,13 +33,14 @@ func main() {
 	)
 
 	mcpServer, err := mcpserver.NewMcpServer(
+		logger,
 		api,
 	)
 	if err != nil {
-		log.Fatalf("error creating MCP Server, error: %v", err.Error())
+		logger.Error("error creating MCP Server", "error: ", err.Error())
 	}
 
 	if err := mcpServer.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
-		log.Fatal(err)
+		logger.Error(err.Error())
 	}
 }

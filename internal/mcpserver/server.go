@@ -2,6 +2,8 @@ package mcpserver
 
 import (
 	"app-do-breno-agent/internal/api"
+	"log/slog"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -10,15 +12,30 @@ func BoolPtr(b bool) *bool {
 	return &b
 }
 
-func NewMcpServer(api *api.API) (*mcp.Server, error) {
+func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
+	implementation := &mcp.Implementation{
+		Name:        "mcp-app-do-breno",
+		Title:       "1.0.0",
+		Description: "Servidor MCP com objetivo de lidar com as transações financeiras do APP Do Breno",
+		Version:     "1.0.0",
+	}
 
-	server := mcp.NewServer(
-		&mcp.Implementation{
-			Name:        "mcp-app-do-breno",
-			Title:       "1.0.0",
-			Description: "Servidor MCP com objetivo de lidar com as transações financeiras do APP Do Breno",
-			Version:     "1.0.0",
-		}, nil)
+	options := &mcp.ServerOptions{
+		Logger:    logger,
+		KeepAlive: 5 * time.Minute,
+		Instructions: `
+		Você é um assistente financeiro e seu papel é fazer analises utilizando as ferramentas de listagem e realizar movimentações 
+		financeiras no aplicativo utilizando as ferramentas de movimentacao, segue tipos de movimentações existentes:
+		Tipos de movimentação:
+			- Diario 	— gasto do dia a dia (débito)
+			- Saida 	— saída fixa mensal
+			- Cartao 	— despesa em cartão de crédito, pode ser parcelada ou unica
+			- Entrada 	— receitas recebidas
+			- Economia 	— valor economizado/poupado
+		`,
+	}
+
+	server := mcp.NewServer(implementation, options)
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "criar_movimentacao",
