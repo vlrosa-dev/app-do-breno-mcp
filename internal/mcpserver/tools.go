@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -77,38 +78,47 @@ func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 
-		opcoesFrequencia := map[string]bool{
-			"mensalmente":  true,
-			"semanalmente": true,
-			"diariamente":  true,
-			"parcelado":    true,
+		if _, err := time.Parse("2026-01-02", input.DataInicial); err != nil {
+			return textResult(
+				"data invalida, formato esperado: 2026-01-02",
+			), nil, nil
 		}
-		if !opcoesFrequencia[input.Frequencia] {
+
+		frequencia := strings.ToUpper(input.Frequencia)
+		opcoesFrequencia := map[string]bool{
+			"MENSALMENTE":  true,
+			"SEMANALMENTE": true,
+			"DIARIAMENTE":  true,
+			"PARCELADO":    true,
+		}
+		if !opcoesFrequencia[frequencia] {
 			return textResult(
 				"tipo invalido, valores esperados: mensalmente, semanalmente, diariamente ou parcelado",
 			), nil, nil
 		}
 
+		periodRecorrencia := strings.ToUpper(input.PeriodicidadeRecorrencia)
 		opcoesPeriodicidadeRecorrencia := map[string]bool{
-			"Mensalmente":  true,
-			"Semanalmente": true,
-			"Diariamente":  true,
-			"Parcelado":    true,
+			"MENSALMENTE":  true,
+			"SEMANALMENTE": true,
+			"DIARIAMENTE":  true,
+			"PARCELADO":    true,
 		}
-		if !opcoesPeriodicidadeRecorrencia[input.PeriodicidadeRecorrencia] {
+		if !opcoesPeriodicidadeRecorrencia[periodRecorrencia] {
 			return textResult(
-				"tipo invalido, valores esperados: Mensalmente, Semanalmente, Diariamente ou Parcelado",
+				"tipo invalido, valores esperados: mensalmente, semanalmente, diariamente ou parcelado",
 			), nil, nil
 		}
 
+		tipo := strings.ToUpper(input.Tipo)
 		opcoesDespesas := map[string]bool{
-			"Diario":   true,
-			"Saida":    true,
-			"Economia": true,
-			"Entrada":  true,
-			"Cartao":   true,
+			"DIARIO":   true,
+			"SAIDA":    true,
+			"ECONOMIA": true,
+			"ENTRADA":  true,
+			"CARTAO":   true,
 		}
-		if !opcoesDespesas[input.Tipo] {
+		if !opcoesDespesas[tipo] {
 			return textResult(
 				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
 			), nil, nil
