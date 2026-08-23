@@ -23,6 +23,12 @@ func jsonResult(v any) (*mcp.CallToolResult, error) {
 	return textResult(string(data)), nil
 }
 
+// listResult wraps a slice so it can be used as MCP structuredContent, which
+// the protocol requires to be a JSON object — a bare JSON array fails validation.
+type listResult[T any] struct {
+	Items []T `json:"items"`
+}
+
 // Expenses
 
 func ToolCreateExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
@@ -99,7 +105,7 @@ func ToolListExpenses(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRe
 			return textResult("Unable to list transactions or no transactions found."), nil, nil
 		}
 		result, err := jsonResult(despesas)
-		return result, despesas, err
+		return result, listResult[structs.DespesasListarResponse]{Items: despesas}, err
 	}
 }
 
@@ -115,7 +121,7 @@ func ToolListResume(api *api.API) mcp.ToolHandlerFor[*structs.ResumoSaldosReques
 			return textResult("Unable to fetch resume."), nil, nil
 		}
 		result, err := jsonResult(resumo)
-		return result, resumo, err
+		return result, listResult[structs.ResumoSaldosResponse]{Items: resumo}, err
 	}
 }
 
@@ -131,7 +137,7 @@ func ToolListTags(api *api.API) mcp.ToolHandlerFor[*structs.TagListRequest, any]
 			return textResult("Unable to list tags."), nil, nil
 		}
 		result, err := jsonResult(tags)
-		return result, tags, err
+		return result, listResult[structs.TagListResponse]{Items: tags}, err
 	}
 }
 

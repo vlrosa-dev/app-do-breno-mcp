@@ -55,23 +55,23 @@ type DespesasRecorrentesUpdateRequest struct {
 }
 
 type DespesasRecorrentesDeleteRequest struct {
-	From          string `params:"p_from" description:"Data a partir da qual as movimentações recorrentes devem ser deletadas, formato: YYYY-MM-DD"`
-	RecorrenciaID string `params:"p_recorrencia" description:"ID da recorrência a ser deletada"`
-	UserId        string `params:"p_user" description:"ID do usuário que está realizando a movimentação"`
+	From          string `json:"p_from" description:"Data a partir da qual as movimentações recorrentes devem ser deletadas, formato: YYYY-MM-DD"`
+	RecorrenciaID string `json:"p_recorrencia" description:"ID da recorrência a ser deletada"`
+	UserId        string `json:"p_user" description:"ID do usuário que está realizando a movimentação"`
 }
 
 type DespesasRecorrentesTodosDeleteRequest struct {
-	RecorrenciaID string `params:"p_recorrencia" description:"ID da recorrência a ser deletada"`
-	UserId        string `params:"p_user" description:"ID do usuário que está realizando a movimentação"`
+	RecorrenciaID string `json:"p_recorrencia" description:"ID da recorrência a ser deletada"`
+	UserId        string `json:"p_user" description:"ID do usuário que está realizando a movimentação"`
 }
 
 // LIST
 type DespesasListarRequest struct {
-	Select      string `params:"select" description:"Campos a serem selecionados na consulta, formato: *"`
-	UserId      string `params:"user_id" description:"ID do usuário para filtrar as movimentações, formato: <user_id>"`
-	Tipo        string `params:"tipo" description:"Tipo de movimentação para filtrar, valores possíveis: 'Diario' ou 'Entrada'"`
-	DataInicial string `params:"data" description:"Data da movimentação para filtrar, formato: YYYY-MM-DD"`
-	DataFinal   string `params:"data" description:"Data final da movimentação para filtrar, formato: YYYY-MM-DD"`
+	Select      string `json:"select" description:"Campos a serem selecionados na consulta, default: *"`
+	UserId      string `json:"user_id" description:"ID do usuário para filtrar as movimentações, formato: <user_id>"`
+	Tipo        string `json:"tipo" description:"Tipo de movimentação para filtrar, valores possíveis: 'Diario' ou 'Entrada'"`
+	DataInicial string `json:"data_inicial" description:"Data da movimentação para filtrar, formato: YYYY-MM-DD"`
+	DataFinal   string `json:"data_final" description:"Data final da movimentação para filtrar, formato: YYYY-MM-DD"`
 }
 
 type DespesasListarResponse struct {
