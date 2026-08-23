@@ -34,7 +34,7 @@ type listResult[T any] struct {
 
 // Expenses
 
-func ToolCreateExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
+func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -61,7 +61,7 @@ func ToolCreateExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnic
 	}
 }
 
-func ToolDeleteExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaDeleteRequest, any] {
+func HandleDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaDeleteRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -73,7 +73,7 @@ func ToolDeleteExpenseOne(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnic
 	}
 }
 
-func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrenteRequest, any] {
+func HandleCreateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrenteRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrenteRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -148,7 +148,7 @@ func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 	}
 }
 
-func ToolDeleteExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrentesDeleteRequest, any] {
+func HandleDeleteTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrentesDeleteRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrentesDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -162,7 +162,7 @@ func ToolDeleteExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 	}
 }
 
-func ToolDeleteExpensesRecurrencyAll(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrentesTodosDeleteRequest, any] {
+func HandleDeleteAllTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrentesTodosDeleteRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrentesTodosDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -176,7 +176,7 @@ func ToolDeleteExpensesRecurrencyAll(api *api.API) mcp.ToolHandlerFor[*structs.D
 	}
 }
 
-func ToolListExpenses(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRequest, any] {
+func HandleFetchTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasListarRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -211,7 +211,7 @@ func ToolListExpenses(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRe
 
 // Resumo
 
-func ToolListResume(api *api.API) mcp.ToolHandlerFor[*structs.ResumoSaldosRequest, any] {
+func HandleFetchResumeBalanceTool(api *api.API) mcp.ToolHandlerFor[*structs.ResumoSaldosRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.ResumoSaldosRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -229,7 +229,7 @@ func ToolListResume(api *api.API) mcp.ToolHandlerFor[*structs.ResumoSaldosReques
 
 // Tags
 
-func ToolListTags(api *api.API) mcp.ToolHandlerFor[*structs.TagListRequest, any] {
+func HandleFetchTagsTool(api *api.API) mcp.ToolHandlerFor[*structs.TagListRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TagListRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -245,7 +245,7 @@ func ToolListTags(api *api.API) mcp.ToolHandlerFor[*structs.TagListRequest, any]
 
 // Cartao
 
-func ToolListCards(api *api.API) mcp.ToolHandlerFor[*structs.ListCartaoRequest, any] {
+func HandleFetchCardsTool(api *api.API) mcp.ToolHandlerFor[*structs.ListCartaoRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.ListCartaoRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -266,7 +266,7 @@ func ToolListCards(api *api.API) mcp.ToolHandlerFor[*structs.ListCartaoRequest, 
 
 // Totais
 
-func ToolListMonthlyTotals(api *api.API) mcp.ToolHandlerFor[*structs.TotaisMesListRequest, any] {
+func HandleFetchTotalBalanceMonthlyTool(api *api.API) mcp.ToolHandlerFor[*structs.TotaisMesListRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisMesListRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -280,7 +280,7 @@ func ToolListMonthlyTotals(api *api.API) mcp.ToolHandlerFor[*structs.TotaisMesLi
 	}
 }
 
-func ToolListPerformanceYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoPerformanceRequest, any] {
+func HandleFetchPerformanceYearTool(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoPerformanceRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisAnoPerformanceRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -294,7 +294,7 @@ func ToolListPerformanceYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAno
 	}
 }
 
-func ToolListLifeCostYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoCustoDeVidaRequest, any] {
+func HandleFetchLifeCostYearTool(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoCustoDeVidaRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisAnoCustoDeVidaRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -308,7 +308,7 @@ func ToolListLifeCostYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoCus
 	}
 }
 
-func ToolListSavingYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoEconomizadoRequest, any] {
+func HandleFetchSavingYearTool(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoEconomizadoRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisAnoEconomizadoRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -322,7 +322,7 @@ func ToolListSavingYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisAnoEcono
 	}
 }
 
-func ToolListDailyAverageYear(api *api.API) mcp.ToolHandlerFor[*structs.TotaisDiarioMedioAnoRequest, any] {
+func HandleFetchAverageCostDailyTool(api *api.API) mcp.ToolHandlerFor[*structs.TotaisDiarioMedioAnoRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisDiarioMedioAnoRequest,
 	) (*mcp.CallToolResult, any, error) {

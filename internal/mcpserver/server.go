@@ -29,7 +29,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, ToolCreateExpenseOne(api))
+	}, HandleCreateTransactionTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao",
@@ -40,7 +40,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, ToolDeleteExpenseOne(api))
+	}, HandleDeleteTransaction(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "criar_movimentacao_em_serie",
@@ -51,7 +51,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, ToolCreateExpensesRecurrency(api))
+	}, HandleCreateTransactionInSerieTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao_em_serie_da_data",
@@ -62,7 +62,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, ToolDeleteExpensesRecurrency(api))
+	}, HandleDeleteTransactionInSerieTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_todas_movimentacoes_em_serie",
@@ -73,7 +73,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, ToolDeleteExpensesRecurrencyAll(api))
+	}, HandleDeleteAllTransactionInSerieTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_movimentacoes",
@@ -84,7 +84,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, ToolListExpenses(api))
+	}, HandleFetchTransactionTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_saldos",
@@ -95,7 +95,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListResume(api))
+	}, HandleFetchResumeBalanceTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_tags",
@@ -106,7 +106,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListTags(api))
+	}, HandleFetchTagsTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_cartoes_de_creditos",
@@ -117,7 +117,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListCards(api))
+	}, HandleFetchCardsTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_totais_mes",
@@ -128,7 +128,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListMonthlyTotals(api))
+	}, HandleFetchTotalBalanceMonthlyTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_performance_ano",
@@ -139,7 +139,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListPerformanceYear(api))
+	}, HandleFetchPerformanceYearTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_custo_de_vida_ano",
@@ -150,7 +150,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListLifeCostYear(api))
+	}, HandleFetchLifeCostYearTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_economia_ano",
@@ -161,7 +161,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListSavingYear(api))
+	}, HandleFetchSavingYearTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_diario_medio_ano",
@@ -172,7 +172,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    true,
 		},
-	}, ToolListDailyAverageYear(api))
+	}, HandleFetchAverageCostDailyTool(api))
 
 	return server, nil
 }
