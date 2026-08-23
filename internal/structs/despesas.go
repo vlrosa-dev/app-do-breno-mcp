@@ -23,8 +23,8 @@ type DespesasUnicaUpdateRequest struct {
 }
 
 type DespesasUnicaDeleteRequest struct {
-	Id     string `params:"id" description:"ID da movimentação a ser deletada"`
-	UserId string `params:"user_id" description:"ID do usuário que está realizando a movimentação"`
+	Id     string `json:"id" description:"ID da movimentação a ser deletada"`
+	UserId string `json:"user_id" description:"ID do usuário que está realizando a movimentação"`
 }
 
 // Expenses Recurrency
