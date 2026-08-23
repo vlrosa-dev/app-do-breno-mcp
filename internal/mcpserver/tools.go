@@ -5,8 +5,8 @@ import (
 	"app-do-breno-agent/internal/structs"
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
-	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -78,9 +78,18 @@ func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 
-		if _, err := time.Parse("2026-01-02", input.DataInicial); err != nil {
+		if input.Infinita {
+			input.NumeroRepeticoes = 24
+			input.QuantidadeRepeticoes = 24
+		}
+		if input.NumeroRepeticoes <= 0 {
 			return textResult(
-				"data invalida, formato esperado: 2026-01-02",
+				"numero de repeticoes deve ser maior que 0",
+			), nil, nil
+		}
+		if input.QuantidadeRepeticoes <= 0 {
+			return textResult(
+				"quantidade de repeticoes deve ser maior que 0",
 			), nil, nil
 		}
 
@@ -125,7 +134,9 @@ func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 		}
 
 		if err := api.CreateExpensesRecurrency(ctx, *input); err != nil {
-			return textResult("Unable to create recurring transaction."), nil, nil
+			return textResult(
+				fmt.Sprintf("Unable to create recurring transaction, msg: %v", err.Error()),
+			), nil, nil
 		}
 		return textResult("Recurring transaction created successfully."), nil, nil
 	}

@@ -146,7 +146,7 @@ func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.Despes
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusNoContent {
+	if res.StatusCode > http.StatusNoContent {
 		return fmt.Errorf(
 			"error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData,
 		)

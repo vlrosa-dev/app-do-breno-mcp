@@ -29,7 +29,7 @@ type DespesasUnicaDeleteRequest struct {
 
 // Expenses Recurrency
 type DespesasRecorrenteRequest struct {
-	DataInicial              string  `json:"p_data_inicial" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DDTHH:MM:SSZ"`
+	DataInicial              string  `json:"p_data_inicial" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
 	Descricao                string  `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
 	Frequencia               string  `json:"p_frequencia" jsonschema:"required" description:"Frequência da recorrência, valores possíveis: 'mensalmente', 'semanalmente', 'diariamente', 'parcelado'"`
 	Infinita                 bool    `json:"p_infinita" jsonschema:"required" description:"Indica se a recorrência é infinita"`
@@ -38,7 +38,7 @@ type DespesasRecorrenteRequest struct {
 	QuantidadeRepeticoes     int     `json:"p_quantidade_repeticoes" description:"Quantidade de repetições da recorrência, necessário se a recorrência não for infinita"`
 	TagIds                   []int   `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
 	Tipo                     string  `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Economia', 'Cartao'"`
-	UserId                   string  `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
+	UserId                   string  `json:"p_user_id" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
 	Valor                    float64 `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
