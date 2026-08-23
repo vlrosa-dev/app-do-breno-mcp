@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (api *API) CreateExpenseOne(ctx context.Context, obj *structs.DespesasUnicaRequest) (string, error) {
+func (api *API) HandleCreateTransactionHTTP(ctx context.Context, obj *structs.DespesasUnicaRequest) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (api *API) CreateExpenseOne(ctx context.Context, obj *structs.DespesasUnica
 	return string(responseData), nil
 }
 
-func (api *API) DeleteExpenseOne(ctx context.Context, obj *structs.DespesasUnicaDeleteRequest) error {
+func (api *API) HandleDeleteTransactionHTTP(ctx context.Context, obj *structs.DespesasUnicaDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -107,7 +107,7 @@ func (api *API) DeleteExpenseOne(ctx context.Context, obj *structs.DespesasUnica
 	return nil
 }
 
-func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.DespesasRecorrenteRequest) error {
+func (api *API) HandleCreateTransactionInSerieHTTP(ctx context.Context, obj structs.DespesasRecorrenteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -155,7 +155,7 @@ func (api *API) CreateExpensesRecurrency(ctx context.Context, obj structs.Despes
 	return nil
 }
 
-func (api *API) DeleteExpensesRecurrency(ctx context.Context, obj structs.DespesasRecorrentesDeleteRequest) error {
+func (api *API) HandleDeleteTransactionInSerieHTTP(ctx context.Context, obj structs.DespesasRecorrentesDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -203,7 +203,7 @@ func (api *API) DeleteExpensesRecurrency(ctx context.Context, obj structs.Despes
 	return nil
 }
 
-func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.DespesasRecorrentesTodosDeleteRequest) error {
+func (api *API) HandleDeleteAllTransactionInSerieHTTP(ctx context.Context, obj structs.DespesasRecorrentesTodosDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -251,7 +251,7 @@ func (api *API) DeleteExpensesRecurrencyAll(ctx context.Context, obj structs.Des
 	return nil
 }
 
-func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequest) ([]structs.DespesasListarResponse, error) {
+func (api *API) HandleFetchTransactionsHTTP(ctx context.Context, obj structs.DespesasListarRequest) ([]structs.DespesasListarResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -294,6 +294,62 @@ func (api *API) ListExpenses(ctx context.Context, obj structs.DespesasListarRequ
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
+		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
+		log.Println(msgError)
+		return []structs.DespesasListarResponse{}, msgError
+	}
+
+	var despesasResponse []structs.DespesasListarResponse
+	err = json.Unmarshal(responseData, &despesasResponse)
+	if err != nil {
+		log.Printf("error unmarshaling response: %+v", err)
+		return []structs.DespesasListarResponse{}, err
+	}
+
+	return despesasResponse, nil
+}
+
+func (api *API) HandleGetTransactionByIdHTTP(ctx context.Context, obj structs.DespesasUnicaGetRequest) ([]structs.DespesasListarResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/view_movimentacao_all")
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
+	}
+
+	params := url.Values{}
+	params.Add("select", obj.Select)
+	params.Add("limit", fmt.Sprintf("%d", obj.Limit))
+	params.Add("movimentacao_id", fmt.Sprintf("eq.%s", obj.MovimentacaoId))
+	params.Add("user_id", fmt.Sprintf("eq.%s", api.UserID))
+	u.RawQuery = params.Encode()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
+	}
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
+	}
+
+	if res == nil {
+		return []structs.DespesasListarResponse{}, fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return []structs.DespesasListarResponse{}, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode > http.StatusNoContent {
 		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
 		log.Println(msgError)
 		return []structs.DespesasListarResponse{}, msgError

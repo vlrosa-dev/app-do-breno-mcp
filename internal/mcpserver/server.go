@@ -194,5 +194,16 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 		},
 	}, HandleFetchAverageCostDailyTool(api))
 
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "listar_movimentacao_por_id",
+		Description: "Obter movimentação pelo ID para atualização dos dados",
+		Annotations: &mcp.ToolAnnotations{
+			DestructiveHint: BoolPtr(true),
+			IdempotentHint:  false,
+			OpenWorldHint:   BoolPtr(false),
+			ReadOnlyHint:    true,
+		},
+	}, HandleFetchTransactionByIdTool(api))
+
 	return server, nil
 }

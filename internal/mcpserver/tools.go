@@ -53,7 +53,7 @@ func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despe
 				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
 			), nil, nil
 		}
-		id, err := api.CreateExpenseOne(ctx, input)
+		id, err := api.HandleCreateTransactionHTTP(ctx, input)
 		if err != nil {
 			return textResult("Unable to create transaction."), nil, nil
 		}
@@ -66,7 +66,7 @@ func HandleDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.DespesasU
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
-		if err := api.DeleteExpenseOne(ctx, input); err != nil {
+		if err := api.HandleDeleteTransactionHTTP(ctx, input); err != nil {
 			return textResult("Unable to delete transaction."), nil, nil
 		}
 		return textResult("Transaction deleted successfully."), nil, nil
@@ -139,7 +139,7 @@ func HandleCreateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*struct
 			), nil, nil
 		}
 
-		if err := api.CreateExpensesRecurrency(ctx, *input); err != nil {
+		if err := api.HandleCreateTransactionInSerieHTTP(ctx, *input); err != nil {
 			return textResult(
 				fmt.Sprintf("Unable to create recurring transaction, msg: %v", err.Error()),
 			), nil, nil
@@ -153,7 +153,7 @@ func HandleDeleteTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*struct
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrentesDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
-		if err := api.DeleteExpensesRecurrency(ctx, *input); err != nil {
+		if err := api.HandleDeleteTransactionInSerieHTTP(ctx, *input); err != nil {
 			return textResult(
 				fmt.Sprintf("Unable to delete recurring transactions, msg: %v", err.Error()),
 			), nil, nil
@@ -167,7 +167,7 @@ func HandleDeleteAllTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*str
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrentesTodosDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
-		if err := api.DeleteExpensesRecurrencyAll(ctx, *input); err != nil {
+		if err := api.HandleDeleteAllTransactionInSerieHTTP(ctx, *input); err != nil {
 			return textResult(
 				fmt.Sprintf("Unable to delete all recurring transactions, msg: %v", err.Error()),
 			), nil, nil
@@ -198,7 +198,7 @@ func HandleFetchTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despes
 			input.DataFinal = dataFinal.AddDate(0, 0, 1).Format("2006-01-02")
 		}
 
-		despesas, err := api.ListExpenses(ctx, *input)
+		despesas, err := api.HandleFetchTransactionsHTTP(ctx, *input)
 		if err != nil {
 			return textResult(
 				fmt.Sprintf("Unable to list transactions or no transactions found, msg: %v", err.Error()),
@@ -333,5 +333,19 @@ func HandleFetchAverageCostDailyTool(api *api.API) mcp.ToolHandlerFor[*structs.T
 		}
 		result, err := jsonResult(dailyAverage)
 		return result, dailyAverage, err
+	}
+}
+
+func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaGetRequest, any] {
+	return func(
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaGetRequest,
+	) (*mcp.CallToolResult, any, error) {
+		input.UserId = api.UserID
+		response, err := api.HandleGetTransactionByIdHTTP(ctx, *input)
+		if err != nil {
+			return textResult("Unable to fetch transaction by id."), nil, nil
+		}
+		result, err := jsonResult(response)
+		return result, response, err
 	}
 }

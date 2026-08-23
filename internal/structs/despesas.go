@@ -22,6 +22,13 @@ type DespesasUnicaUpdateRequest struct {
 	Valor     float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
+type DespesasUnicaGetRequest struct {
+	Limit          int
+	MovimentacaoId string
+	Select         string
+	UserId         string
+}
+
 type DespesasUnicaDeleteRequest struct {
 	Id     string `json:"id" description:"ID da movimentação a ser deletada"`
 	UserId string `json:"user_id" description:"ID do usuário que está realizando a movimentação"`
