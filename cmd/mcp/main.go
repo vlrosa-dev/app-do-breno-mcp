@@ -63,11 +63,11 @@ func main() {
 	// )
 	// log.Println(list)
 
-	list, _ := api.ListResultstMonthly(
+	list, _ := api.ListLifeCostYear(
 		context.Background(),
-		structs.TotaisMesListRequest{
-			MesInput:  "2026-09-01",
-			UserInput: api.UserID,
+		structs.TotaisAnoCustoDeVidaRequest{
+			Ano:    "2026",
+			UserId: api.UserID,
 		},
 	)
 	log.Println(list)
