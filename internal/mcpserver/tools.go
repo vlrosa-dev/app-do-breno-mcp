@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -178,6 +179,20 @@ func ToolListExpenses(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRe
 		if input.Select == "" {
 			input.Select = "*"
 		}
+
+		dataInicial, err := time.Parse("2006-01-02", input.DataInicial)
+		if err != nil {
+			return textResult("error parsing date to format 2006-01-02"), nil, nil
+		}
+		dataFinal, err := time.Parse("2006-01-02", input.DataFinal)
+		if err != nil {
+			return textResult("error parsing date to format 2006-01-02"), nil, nil
+		}
+
+		if dataInicial.Equal(dataFinal) {
+			input.DataFinal = dataFinal.AddDate(0, 0, 1).Format("2006-01-02")
+		}
+
 		despesas, err := api.ListExpenses(ctx, *input)
 		if err != nil {
 			return textResult("Unable to list transactions or no transactions found."), nil, nil
