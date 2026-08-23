@@ -243,6 +243,27 @@ func ToolListTags(api *api.API) mcp.ToolHandlerFor[*structs.TagListRequest, any]
 	}
 }
 
+// Cartao
+
+func ToolListCards(api *api.API) mcp.ToolHandlerFor[*structs.ListCartaoRequest, any] {
+	return func(
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.ListCartaoRequest,
+	) (*mcp.CallToolResult, any, error) {
+		input.UserId = api.UserID
+		if input.Select == "" {
+			input.Select = "*"
+		}
+		cartoes, err := api.ListCards(ctx, *input)
+		if err != nil {
+			return textResult(
+				fmt.Sprintf("Unable to list cards, msg: %v", err.Error()),
+			), nil, nil
+		}
+		result, err := jsonResult(cartoes)
+		return result, listResult[structs.ListCartaoResponse]{Items: cartoes}, err
+	}
+}
+
 // Totais
 
 func ToolListMonthlyTotals(api *api.API) mcp.ToolHandlerFor[*structs.TotaisMesListRequest, any] {

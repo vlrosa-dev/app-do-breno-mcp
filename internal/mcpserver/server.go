@@ -107,6 +107,17 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolListTags(api))
 
 	mcp.AddTool(server, &mcp.Tool{
+		Name:        "listar_cartoes",
+		Description: "Lista os cartões cadastrados com dia de vencimento e fechamento para calculo da data",
+		Annotations: &mcp.ToolAnnotations{
+			DestructiveHint: BoolPtr(true),
+			IdempotentHint:  false,
+			OpenWorldHint:   BoolPtr(false),
+			ReadOnlyHint:    true,
+		},
+	}, ToolListCards(api))
+
+	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_totais_mes",
 		Description: "Lista os totais e indicadores de um mês específico",
 		Annotations: &mcp.ToolAnnotations{
