@@ -4,22 +4,22 @@ import "time"
 
 // Expenses One
 type DespesasUnicaRequest struct {
-	Data      string  `json:"p_data" jsonschema:"required" description:"Data da movimentação, formato: YYYY-MM-DD"`
-	Descricao string  `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
-	TagIds    []int   `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
-	Tipo      string  `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario' ou 'Entrada'"`
-	User      string  `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
-	Valor     float64 `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
+	Data      string   `json:"p_data" jsonschema:"required" description:"Data da movimentação, formato: YYYY-MM-DD"`
+	Descricao string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
+	TagIds    []string `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
+	Tipo      string   `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario' ou 'Entrada'"`
+	User      string   `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
+	Valor     float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
 type DespesasUnicaUpdateRequest struct {
-	Data      string  `json:"p_data" jsonschema:"required" description:"Data da movimentação, formato: YYYY-MM-DD"`
-	Descricao string  `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
-	MovId     string  `json:"p_mov" jsonschema:"required" description:"Descrição da movimentação"`
-	TagIds    []int   `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
-	Tipo      string  `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Cartao' ou 'Saida'"`
-	User      string  `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
-	Valor     float64 `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
+	Data      string   `json:"p_data" jsonschema:"required" description:"Data da movimentação, formato: YYYY-MM-DD"`
+	Descricao string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
+	MovId     string   `json:"p_mov" jsonschema:"required" description:"Descrição da movimentação"`
+	TagIds    []string `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
+	Tipo      string   `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Cartao' ou 'Saida'"`
+	User      string   `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
+	Valor     float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
 type DespesasUnicaDeleteRequest struct {
@@ -29,29 +29,29 @@ type DespesasUnicaDeleteRequest struct {
 
 // Expenses Recurrency
 type DespesasRecorrenteRequest struct {
-	DataInicial              string  `json:"p_data_inicial" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
-	Descricao                string  `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
-	Frequencia               string  `json:"p_frequencia" jsonschema:"required" description:"Frequência da recorrência, valores possíveis: 'mensalmente', 'semanalmente', 'diariamente', 'parcelado'"`
-	Infinita                 bool    `json:"p_infinita" jsonschema:"required" description:"Indica se a recorrência é infinita"`
-	NumeroRepeticoes         int     `json:"p_numero_repeticoes" description:"Número de repetições da recorrência, necessário se a recorrência não for infinita"`
-	PeriodicidadeRecorrencia string  `json:"p_periodicidade_recorrencia" description:"Periodicidade da recorrência, necessário se a recorrência não for infinita, valores possíveis: 'Mensalmente', 'Semanalmente', 'Diariamente'"`
-	QuantidadeRepeticoes     int     `json:"p_quantidade_repeticoes" description:"Quantidade de repetições da recorrência, necessário se a recorrência não for infinita"`
-	TagIds                   []int   `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
-	Tipo                     string  `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Economia', 'Cartao'"`
-	UserId                   string  `json:"p_user_id" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
-	Valor                    float64 `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
+	DataInicial              string   `json:"p_data_inicial" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
+	Descricao                string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
+	Frequencia               string   `json:"p_frequencia" jsonschema:"required" description:"Frequência da recorrência, valores possíveis: 'mensalmente', 'semanalmente', 'diariamente', 'parcelado'"`
+	Infinita                 bool     `json:"p_infinita" jsonschema:"required" description:"Indica se a recorrência é infinita"`
+	NumeroRepeticoes         int      `json:"p_numero_repeticoes" description:"Número de repetições da recorrência, necessário se a recorrência não for infinita"`
+	PeriodicidadeRecorrencia string   `json:"p_periodicidade_recorrencia" description:"Periodicidade da recorrência, necessário se a recorrência não for infinita, valores possíveis: 'Mensalmente', 'Semanalmente', 'Diariamente'"`
+	QuantidadeRepeticoes     int      `json:"p_quantidade_repeticoes" description:"Quantidade de repetições da recorrência, necessário se a recorrência não for infinita"`
+	TagIds                   []string `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
+	Tipo                     string   `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Economia', 'Cartao'"`
+	UserId                   string   `json:"p_user_id" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
+	Valor                    float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
 type DespesasRecorrentesUpdateRequest struct {
-	DateMode    string  `json:"p_data_inicial" jsonschema:"required"`
-	Descricao   string  `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
-	From        string  `json:"p_from" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
-	NewDate     string  `json:"p_new_date" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
-	Recorrencia string  `json:"p_recorrencia" jsonschema:"required" description:"ID da reccorencia"`
-	TagIds      string  `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
-	Tipo        string  `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Economia', 'Cartao'"`
-	User        string  `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
-	Valor       float64 `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
+	DateMode    string   `json:"p_data_inicial" jsonschema:"required"`
+	Descricao   string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
+	From        string   `json:"p_from" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
+	NewDate     string   `json:"p_new_date" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
+	Recorrencia string   `json:"p_recorrencia" jsonschema:"required" description:"ID da reccorencia"`
+	TagIds      []string `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
+	Tipo        string   `json:"p_tipo" jsonschema:"required" description:"Tipo da movimentação, valores possíveis: 'Diario', 'Entrada', 'Economia', 'Cartao'"`
+	User        string   `json:"p_user" jsonschema:"required" description:"Usuário que está realizando a movimentação"`
+	Valor       float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
 type DespesasRecorrentesDeleteRequest struct {
