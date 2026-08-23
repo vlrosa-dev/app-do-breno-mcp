@@ -79,6 +79,11 @@ func ToolCreateExpensesRecurrency(api *api.API) mcp.ToolHandlerFor[*structs.Desp
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 
+		_, err := time.Parse("2006-01-02", input.DataInicial)
+		if err != nil {
+			return textResult("error parsing date to format 2006-01-02"), nil, nil
+		}
+
 		if input.Infinita {
 			input.NumeroRepeticoes = 24
 			input.QuantidadeRepeticoes = 24
@@ -195,7 +200,9 @@ func ToolListExpenses(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRe
 
 		despesas, err := api.ListExpenses(ctx, *input)
 		if err != nil {
-			return textResult("Unable to list transactions or no transactions found."), nil, nil
+			return textResult(
+				fmt.Sprintf("Unable to list transactions or no transactions found, msg: %v", err.Error()),
+			), nil, nil
 		}
 		result, err := jsonResult(despesas)
 		return result, listResult[structs.DespesasListarResponse]{Items: despesas}, err
@@ -211,7 +218,9 @@ func ToolListResume(api *api.API) mcp.ToolHandlerFor[*structs.ResumoSaldosReques
 		input.UserID = api.UserID
 		resumo, err := api.ListResume(ctx, *input)
 		if err != nil {
-			return textResult("Unable to fetch resume."), nil, nil
+			return textResult(
+				fmt.Sprintf("Unable to fetch resume, msg: %v", err.Error()),
+			), nil, nil
 		}
 		result, err := jsonResult(resumo)
 		return result, listResult[structs.ResumoSaldosResponse]{Items: resumo}, err
