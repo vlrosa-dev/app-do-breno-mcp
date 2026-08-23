@@ -11,16 +11,18 @@ func BoolPtr(b bool) *bool {
 }
 
 func NewMcpServer(api *api.API) (*mcp.Server, error) {
-	server := mcp.NewServer(&mcp.Implementation{
-		Name:        "App do Breno MCP",
-		Title:       "App do Breno",
-		Description: "Servidor MCP com objetivo de lidar com as transações financeiras do APP Do Breno",
-		Version:     "1.0.0",
-	}, nil)
+
+	server := mcp.NewServer(
+		&mcp.Implementation{
+			Name:        "mcp-app-do-breno",
+			Title:       "1.0.0",
+			Description: "Servidor MCP com objetivo de lidar com as transações financeiras do APP Do Breno",
+			Version:     "1.0.0",
+		}, nil)
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "criar_transacao_unica",
-		Description: "Cria uma nova transação (movimentação) única",
+		Name:        "criar_movimentacao",
+		Description: "Cria uma nova movimentação que pode ser do tipo (Entrada, Saida, Diario, Economia ou Cartão)",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(false),
 			IdempotentHint:  true,
@@ -30,8 +32,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolCreateExpenseOne(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "deletar_transacao_unica",
-		Description: "Deleta uma transação (movimentação) única",
+		Name:        "deletar_movimentacao",
+		Description: "Deleta movimentação a partir do seu ID",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(true),
 			IdempotentHint:  true,
@@ -41,8 +43,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolDeleteExpenseOne(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "criar_transacao_recorrente",
-		Description: "Cria uma nova série de transações recorrentes",
+		Name:        "criar_movimentacao_em_serie",
+		Description: "Cria uma série de movimentações recorrentes que se repetem semanalmente, mensalmente, diariamente ou parcelado.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(false),
 			IdempotentHint:  false,
@@ -52,8 +54,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolCreateExpensesRecurrency(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "deletar_transacao_recorrente",
-		Description: "Deleta as transações de uma série recorrente a partir de uma data",
+		Name:        "deletar_movimentacao_em_serie_da_data",
+		Description: "Deleta as transações de uma série recorrente a partir de uma data e ID da movimentação recorrente",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(true),
 			IdempotentHint:  true,
@@ -63,8 +65,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolDeleteExpensesRecurrency(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "deletar_transacao_recorrente_todas",
-		Description: "Deleta todas as transações de uma série recorrente",
+		Name:        "deletar_todas_movimentacoes_em_serie",
+		Description: "Deleta todas as transações recorrentes independente de data",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(true),
 			IdempotentHint:  true,
@@ -74,8 +76,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolDeleteExpensesRecurrencyAll(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "listar_transacoes",
-		Description: "Lista as transações (movimentações) filtrando por tipo e período",
+		Name:        "listar_movimentacoes",
+		Description: "Lista todas as movimentações filtrando por tipo (Entrada, Saida, Diario, Economia ou Cartao) e pelo período",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(true),
 			IdempotentHint:  false,
@@ -85,8 +87,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolListExpenses(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "listar_resumo_saldos",
-		Description: "Lista o resumo diário de saldos de um ou mais meses",
+		Name:        "listar_saldos",
+		Description: "Lista o saldos para cada tipo a partir do mês solicitado",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(false),
 			IdempotentHint:  false,
@@ -97,7 +99,7 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_tags",
-		Description: "Lista as tags e seus totais em um mês",
+		Description: "Lista as tags e seus totais no mês",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(true),
 			IdempotentHint:  false,
@@ -107,8 +109,8 @@ func NewMcpServer(api *api.API) (*mcp.Server, error) {
 	}, ToolListTags(api))
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "listar_cartoes",
-		Description: "Lista os cartões cadastrados com dia de vencimento e fechamento para calculo da data",
+		Name:        "listar_cartoes_de_creditos",
+		Description: "Lista os cartões de creditos cadastrados com dia de vencimento e fechamento para calculo de fatura",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(true),
 			IdempotentHint:  false,
