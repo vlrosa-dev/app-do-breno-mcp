@@ -85,7 +85,7 @@ func HandleUpdateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Trans
 				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
 			), nil, nil
 		}
-		err = api.HandlePutTransactionHTTP(ctx, *input)
+		err = api.HandleUpdateTransactionHTTP(ctx, *input)
 		if err != nil {
 			return textResult("Unable to create transaction."), nil, nil
 		}
@@ -93,7 +93,7 @@ func HandleUpdateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Trans
 	}
 }
 
-func HandleDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.TransactionDeleteRequest, any] {
+func HandleDeleteTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionDeleteRequest, any] {
 	return func(
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
@@ -177,6 +177,41 @@ func HandleCreateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*struct
 			), nil, nil
 		}
 		return textResult("Recurring transaction created successfully."), nil, nil
+	}
+}
+
+func HandleUpdateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionInSerieUpdateRequest, any] {
+	return func(
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionInSerieUpdateRequest,
+	) (*mcp.CallToolResult, any, error) {
+		input.User = api.UserID
+		input.DateMode = "reanchor"
+
+		if _, err := time.Parse("2006-01-02", input.From); err != nil {
+			return textResult("error parsing date to format 2006-01-02"), nil, nil
+		}
+
+		if _, err := time.Parse("2006-01-02", input.NewDate); err != nil {
+			return textResult("error parsing date to format 2006-01-02"), nil, nil
+		}
+
+		tipoDespesa := strings.ToUpper(input.Tipo)
+		opcoesDespesas := map[string]bool{
+			"DIARIO":   true,
+			"SAIDA":    true,
+			"ECONOMIA": true,
+			"ENTRADA":  true,
+			"CARTAO":   true,
+		}
+		if !opcoesDespesas[tipoDespesa] {
+			return textResult(
+				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
+			), nil, nil
+		}
+		if err := api.HandleUpdateTransactionInSerieHTTP(ctx, *input); err != nil {
+			return textResult("Unable to create transaction."), nil, nil
+		}
+		return textResult("transaction update with successfull"), nil, nil
 	}
 }
 

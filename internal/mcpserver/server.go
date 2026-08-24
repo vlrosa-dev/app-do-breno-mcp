@@ -71,7 +71,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			OpenWorldHint:   BoolPtr(false),
 			ReadOnlyHint:    false,
 		},
-	}, HandleDeleteTransaction(api))
+	}, HandleDeleteTransactionTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "criar_movimentacao_em_serie",

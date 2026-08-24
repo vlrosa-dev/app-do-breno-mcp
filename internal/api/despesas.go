@@ -61,6 +61,54 @@ func (api *API) HandleCreateTransactionHTTP(ctx context.Context, obj *structs.Tr
 	return string(responseData), nil
 }
 
+func (api *API) HandleUpdateTransactionHTTP(ctx context.Context, obj structs.TransactionUpdateRequest) error {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/movimentacao_update_with_tags_v2")
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return err
+	}
+
+	bodyStruct, err := json.Marshal(obj)
+	if err != nil {
+		return fmt.Errorf("serializando payload: %w", err)
+	}
+	body := bytes.NewReader(bodyStruct)
+
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		return fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode > http.StatusNoContent {
+		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
+		log.Println(msgError)
+		return msgError
+	}
+
+	return nil
+}
+
 func (api *API) HandleDeleteTransactionHTTP(ctx context.Context, obj *structs.TransactionDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
@@ -150,6 +198,54 @@ func (api *API) HandleCreateTransactionInSerieHTTP(ctx context.Context, obj stru
 		return fmt.Errorf(
 			"error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData,
 		)
+	}
+
+	return nil
+}
+
+func (api *API) HandleUpdateTransactionInSerieHTTP(ctx context.Context, obj structs.TransactionInSerieUpdateRequest) error {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/serie_update_from_with_tags_v2")
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return err
+	}
+
+	bodyStruct, err := json.Marshal(obj)
+	if err != nil {
+		return fmt.Errorf("serializando payload: %w", err)
+	}
+	body := bytes.NewReader(bodyStruct)
+
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
+	req.Header.Add("ApiKey", api.ApiKey)
+
+	res, err := api.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		return fmt.Errorf("error: calling %s returned empty response", u.String())
+	}
+
+	responseData, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode > http.StatusNoContent {
+		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
+		log.Println(msgError)
+		return msgError
 	}
 
 	return nil
@@ -363,52 +459,4 @@ func (api *API) HandleGetTransactionByIdHTTP(ctx context.Context, obj structs.Tr
 	}
 
 	return despesasResponse, nil
-}
-
-func (api *API) HandlePutTransactionHTTP(ctx context.Context, obj structs.TransactionUpdateRequest) error {
-	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-
-	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/rpc/movimentacao_update_with_tags_v2")
-	u, err := url.Parse(fullUrl)
-	if err != nil {
-		return err
-	}
-
-	bodyStruct, err := json.Marshal(obj)
-	if err != nil {
-		return fmt.Errorf("serializando payload: %w", err)
-	}
-	body := bytes.NewReader(bodyStruct)
-
-	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), body)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
-	req.Header.Add("ApiKey", api.ApiKey)
-
-	res, err := api.Client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	if res == nil {
-		return fmt.Errorf("error: calling %s returned empty response", u.String())
-	}
-
-	responseData, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode > http.StatusNoContent {
-		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
-		log.Println(msgError)
-		return msgError
-	}
-
-	return nil
 }
