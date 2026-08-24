@@ -10,16 +10,16 @@ LLM compatíveis com MCP.
 |---|---|---|
 | `API_USERNAME` | sim | E-mail da sua conta no App do Breno |
 | `API_PASSWORD` | sim | Senha da sua conta no App do Breno |
-| `API_KEY` | sim | Chave de API da sua conta |
+| `API_KEY` | não | Chave de API. Já vem com um valor padrão (chave pública/anon) embutido no binário — só defina se precisar usar uma chave própria |
 | `API_BASE_URL` | não | URL base da API. Já vem com um valor padrão embutido no binário — só defina se precisar apontar para outro ambiente |
 
-Essas credenciais são pessoais: cada usuário usa as próprias, o binário é o mesmo para todo mundo.
+Só `API_USERNAME` e `API_PASSWORD` são realmente pessoais e obrigatórias; o binário é o mesmo para todo mundo.
 
 ## Instalação
 
 1. Baixe o binário para o seu sistema operacional na página de [Releases](https://github.com/vlrosa-dev/app-do-breno-agent/releases) (`app-do-breno-mcp_<os>_<arch>.tar.gz` ou `.zip` no Windows).
 
-   > Releases automatizados hoje cobrem apenas **Linux** e **Windows** (amd64/arm64). Para usar no macOS, compile a partir do código-fonte (veja abaixo).
+   > Releases automatizados cobrem **Linux**, **Windows** e **macOS (darwin)**, todos em amd64/arm64.
 
 2. Extraia o arquivo e opcionalmente mova o binário para um diretório no seu `PATH`:
 
@@ -45,7 +45,9 @@ O binário fica em `$(go env GOPATH)/bin/mcp` (renomeie se quiser).
 
 O servidor roda via **stdio**, então a configuração em todos os clientes segue o mesmo padrão:
 comando (caminho do binário) + variáveis de ambiente. Substitua `/caminho/para/app-do-breno-mcp`
-e as credenciais pelos seus valores reais.
+e as credenciais pelos seus valores reais. Só `API_USERNAME` e `API_PASSWORD` são necessárias;
+`API_KEY` e `API_BASE_URL` são opcionais e usam os valores padrão embutidos no binário caso não
+sejam definidas.
 
 ### Claude Code
 
@@ -55,7 +57,6 @@ Via CLI:
 claude mcp add app-do-breno \
   --env API_USERNAME=seu-email@exemplo.com \
   --env API_PASSWORD=sua-senha \
-  --env API_KEY=sua-api-key \
   -- /caminho/para/app-do-breno-mcp
 ```
 
@@ -68,8 +69,7 @@ Ou manualmente no `.mcp.json` (na raiz do projeto) ou `~/.claude.json` (escopo g
       "command": "/caminho/para/app-do-breno-mcp",
       "env": {
         "API_USERNAME": "seu-email@exemplo.com",
-        "API_PASSWORD": "sua-senha",
-        "API_KEY": "sua-api-key"
+        "API_PASSWORD": "sua-senha"
       }
     }
   }
@@ -87,8 +87,7 @@ Edite (ou crie) `~/.cursor/mcp.json` (global) ou `.cursor/mcp.json` (por projeto
       "command": "/caminho/para/app-do-breno-mcp",
       "env": {
         "API_USERNAME": "seu-email@exemplo.com",
-        "API_PASSWORD": "sua-senha",
-        "API_KEY": "sua-api-key"
+        "API_PASSWORD": "sua-senha"
       }
     }
   }
@@ -109,7 +108,6 @@ args = []
 [mcp_servers.app-do-breno.env]
 API_USERNAME = "seu-email@exemplo.com"
 API_PASSWORD = "sua-senha"
-API_KEY = "sua-api-key"
 ```
 
 ### Gemini CLI
@@ -123,8 +121,7 @@ Edite `~/.gemini/settings.json`:
       "command": "/caminho/para/app-do-breno-mcp",
       "env": {
         "API_USERNAME": "seu-email@exemplo.com",
-        "API_PASSWORD": "sua-senha",
-        "API_KEY": "sua-api-key"
+        "API_PASSWORD": "sua-senha"
       }
     }
   }
