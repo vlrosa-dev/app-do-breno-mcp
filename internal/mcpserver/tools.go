@@ -334,14 +334,14 @@ func HandleFetchCardsTool(api *api.API) mcp.ToolHandlerFor[*structs.ListCartaoRe
 		if input.Select == "" {
 			input.Select = "*"
 		}
-		cartoes, err := api.ListCards(ctx, *input)
+		response, err := api.ListCards(ctx, *input)
 		if err != nil {
 			return textResult(
 				fmt.Sprintf("Unable to list cards, msg: %v", err.Error()),
 			), nil, nil
 		}
-		result, err := jsonResult(cartoes)
-		return result, listResult[structs.ListCartaoResponse]{Items: cartoes}, err
+		result, err := jsonResult(response)
+		return result, listResult[structs.ListCartaoResponse]{Items: response}, err
 	}
 }
 
@@ -352,12 +352,12 @@ func HandleFetchTotalBalanceMonthlyTool(api *api.API) mcp.ToolHandlerFor[*struct
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisMesListRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserInput = api.UserID
-		totais, err := api.ListResultstMonthly(ctx, *input)
+		response, err := api.ListResultstMonthly(ctx, *input)
 		if err != nil {
 			return textResult("Unable to fetch monthly totals."), nil, nil
 		}
-		result, err := jsonResult(totais)
-		return result, totais, err
+		result, err := jsonResult(response)
+		return result, response, err
 	}
 }
 
@@ -380,12 +380,12 @@ func HandleFetchLifeCostYearTool(api *api.API) mcp.ToolHandlerFor[*structs.Totai
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisAnoCustoDeVidaRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
-		custoDeVida, err := api.ListLifeCostYear(ctx, *input)
+		response, err := api.ListLifeCostYear(ctx, *input)
 		if err != nil {
 			return textResult("Unable to fetch yearly life cost."), nil, nil
 		}
-		result, err := jsonResult(custoDeVida)
-		return result, custoDeVida, err
+		result, err := jsonResult(response)
+		return result, nil, err
 	}
 }
 
@@ -394,12 +394,12 @@ func HandleFetchSavingYearTool(api *api.API) mcp.ToolHandlerFor[*structs.TotaisA
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisAnoEconomizadoRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
-		saving, err := api.ListSavingYear(ctx, *input)
+		response, err := api.ListSavingYear(ctx, *input)
 		if err != nil {
 			return textResult("Unable to fetch yearly savings."), nil, nil
 		}
-		result, err := jsonResult(saving)
-		return result, saving, err
+		result, err := jsonResult(response)
+		return result, nil, err
 	}
 }
 
@@ -408,11 +408,11 @@ func HandleFetchAverageCostDailyTool(api *api.API) mcp.ToolHandlerFor[*structs.T
 		ctx context.Context, req *mcp.CallToolRequest, input *structs.TotaisDiarioMedioAnoRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
-		dailyAverage, err := api.ListDailyAverageYear(ctx, *input)
+		response, err := api.ListDailyAverageYear(ctx, *input)
 		if err != nil {
 			return textResult("Unable to fetch yearly daily average."), nil, nil
 		}
-		result, err := jsonResult(dailyAverage)
-		return result, dailyAverage, err
+		result, err := jsonResult(response)
+		return result, nil, err
 	}
 }

@@ -14,3 +14,7 @@ type ListCartaoResponse struct {
 	DiaVencimento int    `json:"dia_vencimento" jsonschema:"required" description:"Dia do vencimento da fatura"`
 	UserId        string `json:"user_id" jsonschema:"required" description:"ID do usuario"`
 }
+
+type ListCartaoItensResponse struct {
+	itens []ListCartaoResponse
+}
