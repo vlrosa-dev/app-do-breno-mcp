@@ -48,7 +48,7 @@ type TransactionInSerieRequest struct {
 }
 
 type TransactionInSerieUpdateRequest struct {
-	DateMode    string   `json:"p_data_inicial" jsonschema:"required"`
+	DateMode    string   `json:"p_date_mode" jsonschema:"required"`
 	Descricao   string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
 	From        string   `json:"p_from" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
 	NewDate     string   `json:"p_new_date" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`

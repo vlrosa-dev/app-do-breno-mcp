@@ -209,7 +209,7 @@ func HandleUpdateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*struct
 			), nil, nil
 		}
 		if err := api.HandleUpdateTransactionInSerieHTTP(ctx, *input); err != nil {
-			return textResult("Unable to create transaction."), nil, nil
+			return textResult(fmt.Sprintf("Unable to create transaction, msg: %v", err.Error())), nil, nil
 		}
 		return textResult("transaction update with successfull"), nil, nil
 	}

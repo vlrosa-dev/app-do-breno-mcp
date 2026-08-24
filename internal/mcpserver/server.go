@@ -90,7 +90,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "atualizar_movimentacao_em_serie",
-		Description: "Atualiza os dados de uma transação recorrente.",
+		Description: "Atualiza os dados de uma transação recorrente, acione a tool 'listar_movimentacao_por_id' antes de atualizar.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: BoolPtr(false),
 			IdempotentHint:  false,
