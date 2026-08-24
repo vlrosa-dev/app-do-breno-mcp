@@ -32,7 +32,7 @@ type listResult[T any] struct {
 	Items []T `json:"items"`
 }
 
-// Expenses
+// Transactions
 
 func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
 	return func(
@@ -58,6 +58,38 @@ func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despe
 			return textResult("Unable to create transaction."), nil, nil
 		}
 		return textResult(id), nil, nil
+	}
+}
+
+func HandleUpdateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaUpdateRequest, any] {
+	return func(
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaUpdateRequest,
+	) (*mcp.CallToolResult, any, error) {
+		input.User = api.UserID
+
+		_, err := time.Parse("2006-01-02", input.Data)
+		if err != nil {
+			return textResult("error parsing date to format 2006-01-02"), nil, nil
+		}
+
+		tipoDespesa := strings.ToUpper(input.Tipo)
+		opcoesDespesas := map[string]bool{
+			"DIARIO":   true,
+			"SAIDA":    true,
+			"ECONOMIA": true,
+			"ENTRADA":  true,
+			"CARTAO":   true,
+		}
+		if !opcoesDespesas[tipoDespesa] {
+			return textResult(
+				"tipo invalido, valores esperados: Diario, Saida, Economia, Entrada ou Cartao",
+			), nil, nil
+		}
+		err = api.HandlePutTransactionHTTP(ctx, *input)
+		if err != nil {
+			return textResult("Unable to create transaction."), nil, nil
+		}
+		return textResult("transaction update with successfull"), nil, nil
 	}
 }
 
@@ -209,6 +241,20 @@ func HandleFetchTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despes
 	}
 }
 
+func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaGetRequest, any] {
+	return func(
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaGetRequest,
+	) (*mcp.CallToolResult, any, error) {
+		input.UserId = api.UserID
+		response, err := api.HandleGetTransactionByIdHTTP(ctx, *input)
+		if err != nil {
+			return textResult("Unable to fetch transaction by id."), nil, nil
+		}
+		result, err := jsonResult(response)
+		return result, listResult[structs.DespesasListarResponse]{Items: response}, err
+	}
+}
+
 // Resumo
 
 func HandleFetchResumeBalanceTool(api *api.API) mcp.ToolHandlerFor[*structs.ResumoSaldosRequest, any] {
@@ -333,19 +379,5 @@ func HandleFetchAverageCostDailyTool(api *api.API) mcp.ToolHandlerFor[*structs.T
 		}
 		result, err := jsonResult(dailyAverage)
 		return result, dailyAverage, err
-	}
-}
-
-func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaGetRequest, any] {
-	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaGetRequest,
-	) (*mcp.CallToolResult, any, error) {
-		input.UserId = api.UserID
-		response, err := api.HandleGetTransactionByIdHTTP(ctx, *input)
-		if err != nil {
-			return textResult("Unable to fetch transaction by id."), nil, nil
-		}
-		result, err := jsonResult(response)
-		return result, listResult[structs.DespesasListarResponse]{Items: response}, err
 	}
 }

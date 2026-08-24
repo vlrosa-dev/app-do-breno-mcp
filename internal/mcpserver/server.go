@@ -52,6 +52,17 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 	}, HandleCreateTransactionTool(api))
 
 	mcp.AddTool(server, &mcp.Tool{
+		Name:        "atualizar_movimentacao",
+		Description: "Atualiza uma movimentação que pode ser do tipo (Entrada, Saida, Diario, Economia ou Cartão)",
+		Annotations: &mcp.ToolAnnotations{
+			DestructiveHint: BoolPtr(false),
+			IdempotentHint:  true,
+			OpenWorldHint:   BoolPtr(false),
+			ReadOnlyHint:    false,
+		},
+	}, HandleUpdateTransactionTool(api))
+
+	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao",
 		Description: "Deleta movimentação a partir do seu ID",
 		Annotations: &mcp.ToolAnnotations{
