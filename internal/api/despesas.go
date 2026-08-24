@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (api *API) HandleCreateTransactionHTTP(ctx context.Context, obj *structs.DespesasUnicaRequest) (string, error) {
+func (api *API) HandleCreateTransactionHTTP(ctx context.Context, obj *structs.TransactionRequest) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (api *API) HandleCreateTransactionHTTP(ctx context.Context, obj *structs.De
 	return string(responseData), nil
 }
 
-func (api *API) HandleDeleteTransactionHTTP(ctx context.Context, obj *structs.DespesasUnicaDeleteRequest) error {
+func (api *API) HandleDeleteTransactionHTTP(ctx context.Context, obj *structs.TransactionDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -107,7 +107,7 @@ func (api *API) HandleDeleteTransactionHTTP(ctx context.Context, obj *structs.De
 	return nil
 }
 
-func (api *API) HandleCreateTransactionInSerieHTTP(ctx context.Context, obj structs.DespesasRecorrenteRequest) error {
+func (api *API) HandleCreateTransactionInSerieHTTP(ctx context.Context, obj structs.TransactionInSerieRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -155,7 +155,7 @@ func (api *API) HandleCreateTransactionInSerieHTTP(ctx context.Context, obj stru
 	return nil
 }
 
-func (api *API) HandleDeleteTransactionInSerieHTTP(ctx context.Context, obj structs.DespesasRecorrentesDeleteRequest) error {
+func (api *API) HandleDeleteTransactionInSerieHTTP(ctx context.Context, obj structs.TransactionInSerieDeleteRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -203,7 +203,7 @@ func (api *API) HandleDeleteTransactionInSerieHTTP(ctx context.Context, obj stru
 	return nil
 }
 
-func (api *API) HandleDeleteAllTransactionInSerieHTTP(ctx context.Context, obj structs.DespesasRecorrentesTodosDeleteRequest) error {
+func (api *API) HandleDeleteAllTransactionInSerieHTTP(ctx context.Context, obj structs.TransactionInSerieDeleteAllRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -251,14 +251,14 @@ func (api *API) HandleDeleteAllTransactionInSerieHTTP(ctx context.Context, obj s
 	return nil
 }
 
-func (api *API) HandleFetchTransactionsHTTP(ctx context.Context, obj structs.DespesasListarRequest) ([]structs.DespesasListarResponse, error) {
+func (api *API) HandleFetchTransactionsHTTP(ctx context.Context, obj structs.TransactionListRequest) ([]structs.TransactionListResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/view_movimentacao_all")
 	u, err := url.Parse(fullUrl)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 
 	params := url.Values{}
@@ -272,7 +272,7 @@ func (api *API) HandleFetchTransactionsHTTP(ctx context.Context, obj structs.Des
 
 	req, err := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
 	req.Header.Add("ApiKey", api.ApiKey)
@@ -280,43 +280,43 @@ func (api *API) HandleFetchTransactionsHTTP(ctx context.Context, obj structs.Des
 
 	res, err := api.Client.Do(req)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 
 	if res == nil {
-		return []structs.DespesasListarResponse{}, fmt.Errorf("error: calling %s returned empty response", u.String())
+		return []structs.TransactionListResponse{}, fmt.Errorf("error: calling %s returned empty response", u.String())
 	}
 
 	responseData, err := io.ReadAll(res.Body)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
 		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
 		log.Println(msgError)
-		return []structs.DespesasListarResponse{}, msgError
+		return []structs.TransactionListResponse{}, msgError
 	}
 
-	var despesasResponse []structs.DespesasListarResponse
+	var despesasResponse []structs.TransactionListResponse
 	err = json.Unmarshal(responseData, &despesasResponse)
 	if err != nil {
 		log.Printf("error unmarshaling response: %+v", err)
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 
 	return despesasResponse, nil
 }
 
-func (api *API) HandleGetTransactionByIdHTTP(ctx context.Context, obj structs.DespesasUnicaGetRequest) ([]structs.DespesasListarResponse, error) {
+func (api *API) HandleGetTransactionByIdHTTP(ctx context.Context, obj structs.TransactionGetRequest) ([]structs.TransactionListResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	fullUrl := fmt.Sprintf("%s%s", api.BaseUrl, "/rest/v1/view_movimentacao_all")
 	u, err := url.Parse(fullUrl)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 
 	params := url.Values{}
@@ -328,7 +328,7 @@ func (api *API) HandleGetTransactionByIdHTTP(ctx context.Context, obj structs.De
 
 	req, err := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 	req.Header.Add("Authorization", "Bearer "+api.ApiToken)
 	req.Header.Add("ApiKey", api.ApiKey)
@@ -336,36 +336,36 @@ func (api *API) HandleGetTransactionByIdHTTP(ctx context.Context, obj structs.De
 
 	res, err := api.Client.Do(req)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 
 	if res == nil {
-		return []structs.DespesasListarResponse{}, fmt.Errorf("error: calling %s returned empty response", u.String())
+		return []structs.TransactionListResponse{}, fmt.Errorf("error: calling %s returned empty response", u.String())
 	}
 
 	responseData, err := io.ReadAll(res.Body)
 	if err != nil {
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode > http.StatusNoContent {
 		msgError := fmt.Errorf("error calling %s:\nstatus: %s\nresponseData: %s", u.String(), res.Status, responseData)
 		log.Println(msgError)
-		return []structs.DespesasListarResponse{}, msgError
+		return []structs.TransactionListResponse{}, msgError
 	}
 
-	var despesasResponse []structs.DespesasListarResponse
+	var despesasResponse []structs.TransactionListResponse
 	err = json.Unmarshal(responseData, &despesasResponse)
 	if err != nil {
 		log.Printf("error unmarshaling response: %+v", err)
-		return []structs.DespesasListarResponse{}, err
+		return []structs.TransactionListResponse{}, err
 	}
 
 	return despesasResponse, nil
 }
 
-func (api *API) HandlePutTransactionHTTP(ctx context.Context, obj structs.DespesasUnicaUpdateRequest) error {
+func (api *API) HandlePutTransactionHTTP(ctx context.Context, obj structs.TransactionUpdateRequest) error {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 

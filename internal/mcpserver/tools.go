@@ -34,9 +34,9 @@ type listResult[T any] struct {
 
 // Transactions
 
-func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaRequest, any] {
+func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.User = api.UserID
 
@@ -61,9 +61,9 @@ func HandleCreateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despe
 	}
 }
 
-func HandleUpdateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaUpdateRequest, any] {
+func HandleUpdateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionUpdateRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaUpdateRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionUpdateRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.User = api.UserID
 
@@ -93,9 +93,9 @@ func HandleUpdateTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despe
 	}
 }
 
-func HandleDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaDeleteRequest, any] {
+func HandleDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.TransactionDeleteRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaDeleteRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		if err := api.HandleDeleteTransactionHTTP(ctx, input); err != nil {
@@ -105,9 +105,9 @@ func HandleDeleteTransaction(api *api.API) mcp.ToolHandlerFor[*structs.DespesasU
 	}
 }
 
-func HandleCreateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrenteRequest, any] {
+func HandleCreateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionInSerieRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrenteRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionInSerieRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 
@@ -180,9 +180,9 @@ func HandleCreateTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*struct
 	}
 }
 
-func HandleDeleteTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrentesDeleteRequest, any] {
+func HandleDeleteTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionInSerieDeleteRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrentesDeleteRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionInSerieDeleteRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		if err := api.HandleDeleteTransactionInSerieHTTP(ctx, *input); err != nil {
@@ -194,9 +194,9 @@ func HandleDeleteTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*struct
 	}
 }
 
-func HandleDeleteAllTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasRecorrentesTodosDeleteRequest, any] {
+func HandleDeleteAllTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionInSerieDeleteAllRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasRecorrentesTodosDeleteRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionInSerieDeleteAllRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		if err := api.HandleDeleteAllTransactionInSerieHTTP(ctx, *input); err != nil {
@@ -208,9 +208,9 @@ func HandleDeleteAllTransactionInSerieTool(api *api.API) mcp.ToolHandlerFor[*str
 	}
 }
 
-func HandleFetchTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasListarRequest, any] {
+func HandleFetchTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionListRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasListarRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionListRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		if input.Select == "" {
@@ -237,13 +237,13 @@ func HandleFetchTransactionTool(api *api.API) mcp.ToolHandlerFor[*structs.Despes
 			), nil, nil
 		}
 		result, err := jsonResult(despesas)
-		return result, listResult[structs.DespesasListarResponse]{Items: despesas}, err
+		return result, listResult[structs.TransactionListResponse]{Items: despesas}, err
 	}
 }
 
-func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.DespesasUnicaGetRequest, any] {
+func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.TransactionGetRequest, any] {
 	return func(
-		ctx context.Context, req *mcp.CallToolRequest, input *structs.DespesasUnicaGetRequest,
+		ctx context.Context, req *mcp.CallToolRequest, input *structs.TransactionGetRequest,
 	) (*mcp.CallToolResult, any, error) {
 		input.UserId = api.UserID
 		response, err := api.HandleGetTransactionByIdHTTP(ctx, *input)
@@ -251,7 +251,7 @@ func HandleFetchTransactionByIdTool(api *api.API) mcp.ToolHandlerFor[*structs.De
 			return textResult("Unable to fetch transaction by id."), nil, nil
 		}
 		result, err := jsonResult(response)
-		return result, listResult[structs.DespesasListarResponse]{Items: response}, err
+		return result, listResult[structs.TransactionListResponse]{Items: response}, err
 	}
 }
 

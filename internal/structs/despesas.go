@@ -2,8 +2,7 @@ package structs
 
 import "time"
 
-// Expenses One
-type DespesasUnicaRequest struct {
+type TransactionRequest struct {
 	Data      string   `json:"p_data" jsonschema:"required" description:"Data da movimentação, formato: YYYY-MM-DD"`
 	Descricao string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
 	TagIds    []string `json:"p_tag_ids" description:"IDs das tags associadas à movimentação"`
@@ -12,7 +11,7 @@ type DespesasUnicaRequest struct {
 	Valor     float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
-type DespesasUnicaUpdateRequest struct {
+type TransactionUpdateRequest struct {
 	Data      string   `json:"p_data" jsonschema:"required" description:"Data da movimentação, formato: YYYY-MM-DD"`
 	Descricao string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
 	MovId     string   `json:"p_mov" jsonschema:"required" description:"Descrição da movimentação"`
@@ -22,20 +21,19 @@ type DespesasUnicaUpdateRequest struct {
 	Valor     float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
-type DespesasUnicaGetRequest struct {
+type TransactionGetRequest struct {
 	Limit          int
 	MovimentacaoId string
 	Select         string
 	UserId         string
 }
 
-type DespesasUnicaDeleteRequest struct {
+type TransactionDeleteRequest struct {
 	Id     string `json:"id" description:"ID da movimentação a ser deletada"`
 	UserId string `json:"user_id" description:"ID do usuário que está realizando a movimentação"`
 }
 
-// Expenses Recurrency
-type DespesasRecorrenteRequest struct {
+type TransactionInSerieRequest struct {
 	DataInicial              string   `json:"p_data_inicial" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
 	Descricao                string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
 	Frequencia               string   `json:"p_frequencia" jsonschema:"required" description:"Frequência da recorrência, valores possíveis: 'mensalmente', 'semanalmente', 'diariamente', 'parcelado'"`
@@ -49,7 +47,7 @@ type DespesasRecorrenteRequest struct {
 	Valor                    float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
-type DespesasRecorrentesUpdateRequest struct {
+type TransactionInSerieUpdateRequest struct {
 	DateMode    string   `json:"p_data_inicial" jsonschema:"required"`
 	Descricao   string   `json:"p_descricao" jsonschema:"required" description:"Descrição da movimentação"`
 	From        string   `json:"p_from" jsonschema:"required" description:"Data inicial da recorrência, formato: YYYY-MM-DD"`
@@ -61,19 +59,18 @@ type DespesasRecorrentesUpdateRequest struct {
 	Valor       float64  `json:"p_valor" jsonschema:"required" description:"Valor da movimentação"`
 }
 
-type DespesasRecorrentesDeleteRequest struct {
+type TransactionInSerieDeleteRequest struct {
 	From          string `json:"p_from" description:"Data a partir da qual as movimentações recorrentes devem ser deletadas, formato: YYYY-MM-DD"`
 	RecorrenciaID string `json:"p_recorrencia" description:"ID da recorrência a ser deletada"`
 	UserId        string `json:"p_user" description:"ID do usuário que está realizando a movimentação"`
 }
 
-type DespesasRecorrentesTodosDeleteRequest struct {
+type TransactionInSerieDeleteAllRequest struct {
 	RecorrenciaID string `json:"p_recorrencia" description:"ID da recorrência a ser deletada"`
 	UserId        string `json:"p_user" description:"ID do usuário que está realizando a movimentação"`
 }
 
-// LIST
-type DespesasListarRequest struct {
+type TransactionListRequest struct {
 	Select      string `json:"select" description:"Campos a serem selecionados na consulta, default: *"`
 	UserId      string `json:"user_id" description:"ID do usuário para filtrar as movimentações, formato: <user_id>"`
 	Tipo        string `json:"tipo" description:"Tipo de movimentação para filtrar, valores possíveis: 'Diario' ou 'Entrada'"`
@@ -81,7 +78,7 @@ type DespesasListarRequest struct {
 	DataFinal   string `json:"data_final" description:"Data final da movimentação para filtrar, formato: YYYY-MM-DD"`
 }
 
-type DespesasListarResponse struct {
+type TransactionListResponse struct {
 	MovimentacaoID       string        `json:"movimentacao_id"`
 	CreatedAt            time.Time     `json:"created_at"`
 	Valor                float64       `json:"valor"`
