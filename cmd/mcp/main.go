@@ -14,11 +14,12 @@ import (
 )
 
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	// stdout is reserved for the MCP stdio protocol stream, so all logging must go to stderr.
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
 
-	err := godotenv.Load()
-	if err != nil {
-		logger.Error("Error loading .env file")
+	// .env is optional: when absent, env vars are expected to come from the MCP client config.
+	if err := godotenv.Load(); err != nil && !os.IsNotExist(err) {
+		logger.Warn("error loading .env file", "error", err.Error())
 	}
 	config := config.Load()
 
