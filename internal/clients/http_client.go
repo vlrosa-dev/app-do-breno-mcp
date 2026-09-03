@@ -6,12 +6,10 @@ import (
 	"time"
 )
 
-type HttpClient struct {
-	client *http.Client
-}
-
-func NewApiClient() *http.Client {
-	transport := &http.Transport{
+// NewTransport devolve um *http.Transport com pool de conexões e timeouts
+// afinados para a API do App do Breno.
+func NewTransport() *http.Transport {
+	return &http.Transport{
 		MaxIdleConns:        100,              // total de conexões idle no pool
 		MaxIdleConnsPerHost: 10,               // idle por host — default da stdlib é só 2!
 		MaxConnsPerHost:     0,                // 0 = sem limite de conexões simultâneas por host
@@ -21,14 +19,15 @@ func NewApiClient() *http.Client {
 			KeepAlive: 30 * time.Second,
 		}).DialContext,
 		TLSHandshakeTimeout:   5 * time.Second,
-		ResponseHeaderTimeout: 5 * time.Second, // tempo até o primeiro byte do cabeçalho de resposta
+		ResponseHeaderTimeout: 10 * time.Second, // tempo até o primeiro byte do cabeçalho de resposta
 		ExpectContinueTimeout: 1 * time.Second,
 	}
+}
 
-	client := &http.Client{
-		Transport: transport,
-		Timeout:   10 * time.Second, // timeout total da requisição
+// NewApiClient devolve um *http.Client usando o transport afinado.
+func NewApiClient() *http.Client {
+	return &http.Client{
+		Transport: NewTransport(),
+		Timeout:   30 * time.Second, // timeout total da requisição
 	}
-
-	return client
 }

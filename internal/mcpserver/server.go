@@ -1,7 +1,7 @@
 package mcpserver
 
 import (
-	"app-do-breno-agent/internal/api"
+	"app-do-breno-agent/internal/breno"
 	"log/slog"
 	"time"
 
@@ -12,7 +12,7 @@ func BoolPtr(b bool) *bool {
 	return &b
 }
 
-func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
+func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) {
 	implementation := &mcp.Implementation{
 		Name:        "mcp-app-do-breno",
 		Title:       "1.0.0",
@@ -50,7 +50,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleCreateTransactionTool(api))
+		HandleCreateTransactionTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "atualizar_movimentacao",
@@ -62,7 +62,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleUpdateTransactionTool(api))
+		HandleUpdateTransactionTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao",
@@ -74,7 +74,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleDeleteTransactionTool(api))
+		HandleDeleteTransactionTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "criar_movimentacao_em_serie",
@@ -86,7 +86,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleCreateTransactionInSerieTool(api))
+		HandleCreateTransactionInSerieTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "atualizar_movimentacao_em_serie",
@@ -98,7 +98,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleUpdateTransactionInSerieTool(api))
+		HandleUpdateTransactionInSerieTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao_em_serie_da_data",
@@ -110,7 +110,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleDeleteTransactionInSerieTool(api))
+		HandleDeleteTransactionInSerieTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "deletar_todas_movimentacoes_em_serie",
@@ -122,7 +122,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleDeleteAllTransactionInSerieTool(api))
+		HandleDeleteAllTransactionInSerieTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_movimentacoes",
@@ -134,7 +134,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleFetchTransactionTool(api))
+		HandleFetchTransactionTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_saldos",
@@ -146,7 +146,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchResumeBalanceTool(api))
+		HandleFetchResumeBalanceTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_tags",
@@ -158,7 +158,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchTagsTool(api))
+		HandleFetchTagsTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_cartoes_de_creditos",
@@ -170,7 +170,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchCardsTool(api))
+		HandleFetchCardsTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_totais_mes",
@@ -182,7 +182,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchTotalBalanceMonthlyTool(api))
+		HandleFetchTotalBalanceMonthlyTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_performance_ano",
@@ -194,7 +194,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchPerformanceYearTool(api))
+		HandleFetchPerformanceYearTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_custo_de_vida_ano",
@@ -206,7 +206,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchLifeCostYearTool(api))
+		HandleFetchLifeCostYearTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_economia_ano",
@@ -218,7 +218,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchSavingYearTool(api))
+		HandleFetchSavingYearTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_diario_medio_ano",
@@ -230,7 +230,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchAverageCostDailyTool(api))
+		HandleFetchAverageCostDailyTool(svc))
 
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "listar_movimentacao_por_id",
@@ -242,7 +242,7 @@ func NewMcpServer(logger *slog.Logger, api *api.API) (*mcp.Server, error) {
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchTransactionByIdTool(api))
+		HandleFetchTransactionByIdTool(svc))
 
 	return server, nil
 }
