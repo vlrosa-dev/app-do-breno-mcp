@@ -26,7 +26,7 @@ func (t Token) Valid(skew time.Duration) bool {
 // Credentials são o e-mail e a senha usados no grant_type=password.
 type Credentials struct {
 	Email    string `json:"email"`
-	Password string `json:"senha"`
+	Password string `json:"password"`
 }
 
 func (c Credentials) complete() bool {
