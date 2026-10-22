@@ -1,4 +1,4 @@
-# app-do-breno-mcp
+# App do Breno MCP
 
 Servidor MCP (stdio) do **App do Breno** — expõe as ferramentas de consulta e
 movimentação financeira para clientes de LLM (binário `app-do-breno-mcp`).
