@@ -129,12 +129,12 @@ func TestNewMcpServer_CamposDoServidorSaoOpcionais(t *testing.T) {
 	if err != nil {
 		t.Fatalf("server.Connect: %v", err)
 	}
-	defer ss.Close()
+	defer func() { _ = ss.Close() }()
 	cs, err := mcp.NewClient(&mcp.Implementation{Name: "test", Version: "0"}, nil).Connect(ctx, clientT, nil)
 	if err != nil {
 		t.Fatalf("client.Connect: %v", err)
 	}
-	defer cs.Close()
+	defer func() { _ = cs.Close() }()
 
 	res, err := cs.ListTools(ctx, nil)
 	if err != nil {

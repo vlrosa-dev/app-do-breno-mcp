@@ -56,7 +56,7 @@ func passwordLogin(ctx context.Context, hc *http.Client, baseURL, apiKey string,
 	if err != nil {
 		return authResponse{}, err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, _ := io.ReadAll(res.Body)
 
 	if res.StatusCode != http.StatusOK {
@@ -89,7 +89,7 @@ func fetchUserID(ctx context.Context, hc *http.Client, baseURL, apiKey, accessTo
 	if err != nil {
 		return "", err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, _ := io.ReadAll(res.Body)
 
 	if res.StatusCode != http.StatusOK {

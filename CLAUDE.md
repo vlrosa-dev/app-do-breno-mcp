@@ -21,7 +21,7 @@ go test ./internal/breno -run TestCriarMovimentacaoUnica -count=1 -v
 go test -tags integration ./internal/integration -run TestRotasDeConsulta -count=1 -v
 ```
 
-- Go `1.26.2` (ver `go.mod`).
+- Go `1.27.3` (ver `go.mod`).
 - CI (`.github/workflows/ci.yml`): vet + testes com `-race` + golangci-lint em push na `main` e PRs. Release via GoReleaser ao empurrar tag `v*`.
 - Testes de integração precisam de `API_USERNAME`/`API_PASSWORD` (ambiente ou `.env` na raiz) e pulam sem eles. Os de **escrita** só rodam com `BRENO_IT_WRITE=1` e alteram dados reais da conta (criam movimentações de R$ 0,01 marcadas `[it-mcp]` e as apagam) — não rodar sem o usuário pedir.
 

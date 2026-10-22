@@ -8,10 +8,6 @@ import (
 
 const dateLayout = "2006-01-02"
 
-var tiposValidos = map[TipoMovimentacao]bool{
-	Diario: true, Saida: true, Cartao: true, Entrada: true, Economia: true,
-}
-
 var frequenciasValidas = map[Frequencia]bool{
 	Mensalmente: true, Semanalmente: true, Diariamente: true, Parcelado: true,
 }
