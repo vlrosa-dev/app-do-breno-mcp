@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := help
 
 BIN_DIR   := bin
-MCP_BIN   := $(BIN_DIR)/breno-mcp
-MCP_MAIN  := ./cmd/breno-mcp
+MCP_BIN   := $(BIN_DIR)/app-do-breno-mcp
+MCP_MAIN  := ./cmd/app-do-breno-mcp
 
 .PHONY: help
 help: ## Lista os targets disponíveis
@@ -10,7 +10,7 @@ help: ## Lista os targets disponíveis
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: build
-build: ## Compila o servidor MCP (breno-mcp)
+build: ## Compila o servidor MCP (app-do-breno-mcp)
 	CGO_ENABLED=0 go build -o $(MCP_BIN) $(MCP_MAIN)
 
 .PHONY: test

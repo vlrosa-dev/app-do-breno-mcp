@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"app-do-breno-agent/internal/structs"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/structs"
 )
 
 // CriarMovimentacao cria uma movimentação única ou, quando in.Recorrencia != nil,

@@ -5,11 +5,11 @@ import (
 	"log/slog"
 	"os"
 
-	"app-do-breno-agent/internal/api"
-	"app-do-breno-agent/internal/auth"
-	"app-do-breno-agent/internal/breno"
-	"app-do-breno-agent/internal/config"
-	"app-do-breno-agent/internal/mcpserver"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/api"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/auth"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/breno"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/config"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/mcpserver"
 
 	"github.com/joho/godotenv"
 	"github.com/modelcontextprotocol/go-sdk/mcp"

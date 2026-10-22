@@ -1,4 +1,4 @@
-module app-do-breno-agent
+module github.com/vlrosa-dev/app-do-breno-mcp
 
 go 1.26.2
 

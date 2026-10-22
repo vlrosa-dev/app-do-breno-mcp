@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"app-do-breno-agent/internal/breno"
-	"app-do-breno-agent/internal/structs"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/breno"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/structs"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )

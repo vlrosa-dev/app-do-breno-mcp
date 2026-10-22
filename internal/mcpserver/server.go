@@ -1,7 +1,7 @@
 package mcpserver
 
 import (
-	"app-do-breno-agent/internal/breno"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/breno"
 	"log/slog"
 	"reflect"
 	"slices"
@@ -53,8 +53,8 @@ func addTool[In any](server *mcp.Server, tool *mcp.Tool, handler mcp.ToolHandler
 
 func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) {
 	implementation := &mcp.Implementation{
-		Name:        "mcp-app-do-breno",
-		Title:       "1.0.0",
+		Name:        "app-do-breno-mcp",
+		Title:       "App do Breno MCP",
 		Description: "Servidor MCP com objetivo de lidar com as transações financeiras do APP Do Breno",
 		Version:     "1.0.0",
 	}

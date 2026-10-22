@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"app-do-breno-agent/internal/clients"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/clients"
 )
 
 // TokenProvider entrega um bearer token válido para o Client. É satisfeito por

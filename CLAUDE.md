@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## O que é
 
-Servidor MCP (stdio) em Go para o App do Breno (finanças pessoais sobre Supabase). Binário único: `breno-mcp` (`cmd/breno-mcp`). Código, comentários, mensagens de erro e commits são em português.
+Servidor MCP (stdio) em Go para o App do Breno (finanças pessoais sobre Supabase). Binário único: `app-do-breno-mcp` (`cmd/app-do-breno-mcp`). Código, comentários, mensagens de erro e commits são em português.
 
 ## Comandos
 
 ```bash
-make build              # bin/breno-mcp (CGO_ENABLED=0)
+make build              # bin/app-do-breno-mcp (CGO_ENABLED=0)
 make test               # go test ./... -count=1 (unitários, sem rede)
 make test-race          # com race detector (requer cgo)
 make lint               # go vet (+ golangci-lint se instalado)
@@ -29,7 +29,7 @@ go test -tags integration ./internal/integration -run TestRotasDeConsulta -count
 
 Fluxo de uma chamada: tool MCP → `internal/mcpserver` → `breno.Financas` → `internal/api` → Supabase.
 
-- `cmd/breno-mcp/main.go` — composição: `.env` (opcional) → `config.Load()` → `auth.Manager` → `api.Client` → `breno.Service` → `mcpserver.NewMcpServer`. **stdout é do protocolo MCP; todo log vai para stderr.**
+- `cmd/app-do-breno-mcp/main.go` — composição: `.env` (opcional) → `config.Load()` → `auth.Manager` → `api.Client` → `breno.Service` → `mcpserver.NewMcpServer`. **stdout é do protocolo MCP; todo log vai para stderr.**
 - `internal/mcpserver` — registra as 17 tools (`server.go`) e os handlers (`tools.go`). Handlers só mapeiam entrada → domínio; nenhuma regra de negócio aqui. Erros do serviço viram resultado em texto (`"Unable to ...: <err>"`), não erro de protocolo. Listas são embrulhadas em `{"items": [...]}` no structuredContent (o MCP exige objeto).
 - `internal/breno` — todas as regras de negócio e validação (`validate.go`: normaliza tipo/frequência, datas `YYYY-MM-DD`). Interface `Financas` em `contract.go`; `Service` depende de interfaces locais (`httpDoer`, `Identity`) para permitir fakes nos testes. `CriarMovimentacao` cria movimentação única ou série (`Recorrencia != nil`). Read models são aliases de `internal/structs`.
 - `internal/api` — `Client.REST` (PostgREST `/rest/v1/...`) e `Client.RPC` (`POST /rest/v1/rpc/<fn>`), `APIError` para status ≥ 300. `transport.go` injeta `apikey` + `Bearer` e, num 401, força relogin e repete **uma vez** (só se o corpo for rebobinável).

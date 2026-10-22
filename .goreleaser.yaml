@@ -1,4 +1,4 @@
-# GoReleaser config for app-do-breno-agent.
+# GoReleaser config for app-do-breno-mcp.
 # See https://goreleaser.com
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 
@@ -10,8 +10,8 @@ before:
 
 builds:
   - id: mcp
-    main: ./cmd/breno-mcp
-    binary: breno-mcp
+    main: ./cmd/app-do-breno-mcp
+    binary: app-do-breno-mcp
     env:
       - CGO_ENABLED=0
     goos: [linux, windows, darwin]
@@ -21,7 +21,7 @@ archives:
   - id: mcp
     ids: [mcp]
     formats: [tar.gz]
-    name_template: "breno-mcp_{{ .Os }}_{{ .Arch }}"
+    name_template: "app-do-breno-mcp_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         formats: [zip]

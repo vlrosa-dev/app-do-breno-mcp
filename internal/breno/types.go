@@ -3,7 +3,7 @@
 // Financas e dos tipos deste pacote — nunca dos structs de wire.
 package breno
 
-import "app-do-breno-agent/internal/structs"
+import "github.com/vlrosa-dev/app-do-breno-mcp/internal/structs"
 
 // TipoMovimentacao é o tipo de uma movimentação financeira.
 type TipoMovimentacao string

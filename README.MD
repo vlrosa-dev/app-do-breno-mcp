@@ -1,7 +1,7 @@
-# app-do-breno-agent
+# app-do-breno-mcp
 
 Servidor MCP (stdio) do **App do Breno** — expõe as ferramentas de consulta e
-movimentação financeira para clientes de LLM (binário `breno-mcp`).
+movimentação financeira para clientes de LLM (binário `app-do-breno-mcp`).
 
 As regras de negócio ficam numa camada própria (`internal/breno`); a API é
 acessada por um único cliente HTTP (`internal/api/client.go`) com autenticação
@@ -10,7 +10,7 @@ e cache de token (`internal/auth`).
 ## Arquitetura
 
 ```
-cmd/breno-mcp
+cmd/app-do-breno-mcp
        |
 internal/mcpserver   ← só mapeia entrada das tools -> domínio
        |
@@ -46,7 +46,7 @@ Precedência de configuração: **variável de ambiente > `~/.breno/config.json`
 | `API_KEY` | não | Default embutido (chave anon) |
 | `API_BASE_URL` | não | Default embutido |
 
-## Servidor MCP (`breno-mcp`)
+## Servidor MCP (`app-do-breno-mcp`)
 
 Roda via **stdio**. Configuração igual em todos os clientes: comando (caminho do
 binário) + variáveis de ambiente.
@@ -54,10 +54,10 @@ binário) + variáveis de ambiente.
 ### Claude Code
 
 ```bash
-claude mcp add app-do-breno \
+claude mcp add app-do-breno-mcp \
   --env API_USERNAME=seu-email@exemplo.com \
   --env API_PASSWORD=sua-senha \
-  -- /caminho/para/breno-mcp
+  -- /caminho/para/app-do-breno-mcp
 ```
 
 Ou no `.mcp.json` / `~/.claude.json`:
@@ -65,8 +65,8 @@ Ou no `.mcp.json` / `~/.claude.json`:
 ```json
 {
   "mcpServers": {
-    "app-do-breno": {
-      "command": "/caminho/para/breno-mcp",
+    "app-do-breno-mcp": {
+      "command": "/caminho/para/app-do-breno-mcp",
       "env": { "API_USERNAME": "seu-email@exemplo.com", "API_PASSWORD": "sua-senha" }
     }
   }
@@ -80,8 +80,8 @@ Ou no `.mcp.json` / `~/.claude.json`:
 ```json
 {
   "mcpServers": {
-    "app-do-breno": {
-      "command": "/caminho/para/breno-mcp",
+    "app-do-breno-mcp": {
+      "command": "/caminho/para/app-do-breno-mcp",
       "env": { "API_USERNAME": "seu-email@exemplo.com", "API_PASSWORD": "sua-senha" }
     }
   }
@@ -93,11 +93,11 @@ Ou no `.mcp.json` / `~/.claude.json`:
 `~/.codex/config.toml`:
 
 ```toml
-[mcp_servers.app-do-breno]
-command = "/caminho/para/breno-mcp"
+[mcp_servers.app-do-breno-mcp]
+command = "/caminho/para/app-do-breno-mcp"
 args = []
 
-[mcp_servers.app-do-breno.env]
+[mcp_servers.app-do-breno-mcp.env]
 API_USERNAME = "seu-email@exemplo.com"
 API_PASSWORD = "sua-senha"
 ```
@@ -105,7 +105,7 @@ API_PASSWORD = "sua-senha"
 ## Build
 
 ```bash
-make build        # bin/breno-mcp
+make build        # bin/app-do-breno-mcp
 make test         # testes
 make test-race    # testes + race detector (requer cgo)
 make cover        # cobertura
@@ -115,13 +115,13 @@ make lint         # go vet (+ golangci-lint se instalado)
 Ou direto:
 
 ```bash
-go install github.com/vlrosa-dev/app-do-breno-agent/cmd/breno-mcp@latest
+go install github.com/vlrosa-dev/app-do-breno-mcp/cmd/app-do-breno-mcp@latest
 ```
 
 ## Release (mantenedores)
 
 `.github/workflows/release.yml` roda o GoReleaser ao empurrar uma tag `v*` e
-publica o binário `breno-mcp_*` para linux/windows/darwin
+publica o binário `app-do-breno-mcp_*` para linux/windows/darwin
 em amd64/arm64:
 
 ```bash

@@ -1,7 +1,7 @@
 //go:build integration
 
 // Package integration exercita as rotas reais da API (Supabase) passando pela
-// mesma pilha usada pelo breno-mcp: auth.Manager -> api.Client -> breno.Service
+// mesma pilha usada pelo app-do-breno-mcp: auth.Manager -> api.Client -> breno.Service
 // -> servidor MCP.
 //
 // Rodar com `make test-integration`. Requer API_USERNAME/API_PASSWORD (ambiente
@@ -19,11 +19,11 @@ import (
 	"testing"
 	"time"
 
-	"app-do-breno-agent/internal/api"
-	"app-do-breno-agent/internal/auth"
-	"app-do-breno-agent/internal/breno"
-	"app-do-breno-agent/internal/config"
-	"app-do-breno-agent/internal/mcpserver"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/api"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/auth"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/breno"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/config"
+	"github.com/vlrosa-dev/app-do-breno-mcp/internal/mcpserver"
 
 	"github.com/joho/godotenv"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
