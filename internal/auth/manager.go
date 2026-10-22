@@ -88,34 +88,6 @@ func (m *Manager) ForceLogin(ctx context.Context) (string, error) {
 	return m.login(ctx)
 }
 
-// Login reautentica com credenciais explícitas e as persiste. Usado pelo
-// comando `breno auth login`.
-func (m *Manager) Login(ctx context.Context, creds Credentials) (Token, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.creds = creds
-	if _, err := m.login(ctx); err != nil {
-		return Token{}, err
-	}
-	return m.token, nil
-}
-
-// Logout apaga o estado persistido e o cache em memória.
-func (m *Manager) Logout() error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.token = Token{}
-	m.creds = Credentials{}
-	return m.store.Clear()
-}
-
-// Status devolve o token em cache e se ele ainda é válido.
-func (m *Manager) Status() (Token, bool) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	return m.token, m.token.Valid(expirySkew)
-}
-
 // UserID devolve o id do usuário do último login (vazio se nunca autenticou).
 func (m *Manager) UserID() string {
 	m.mu.Lock()
@@ -137,7 +109,7 @@ func (m *Manager) EnsureUserID(ctx context.Context) (string, error) {
 // login executa o fluxo de senha e persiste o resultado. Requer m.mu travado.
 func (m *Manager) login(ctx context.Context) (string, error) {
 	if !m.creds.complete() {
-		return "", fmt.Errorf("sem credenciais: defina API_USERNAME/API_PASSWORD ou rode `breno auth login`")
+		return "", fmt.Errorf("sem credenciais: defina API_USERNAME/API_PASSWORD")
 	}
 
 	auth, err := passwordLogin(ctx, m.hc, m.baseURL, m.apiKey, m.creds)

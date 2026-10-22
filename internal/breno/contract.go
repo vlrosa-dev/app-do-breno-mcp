@@ -2,7 +2,7 @@ package breno
 
 import "context"
 
-// Financas é o contrato único compartilhado por todos os clientes (MCP, CLI).
+// Financas é o contrato de domínio consumido pelo servidor MCP.
 // A implementação concreta é *Service.
 type Financas interface {
 	// Movimentações

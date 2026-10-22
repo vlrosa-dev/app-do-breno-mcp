@@ -168,24 +168,3 @@ func TestManager_ForceLoginAlwaysHitsServer(t *testing.T) {
 		t.Fatalf("esperava 2 logins, veio %d", hits)
 	}
 }
-
-func TestManager_LogoutClearsStore(t *testing.T) {
-	as := newAuthServer(t)
-	path := filepath.Join(t.TempDir(), "config.json")
-	store := NewFileStore(path)
-	m := newManager(t, as, store, Credentials{Email: "a@b.com", Password: "pw"})
-
-	if _, err := m.Token(context.Background()); err != nil {
-		t.Fatalf("Token: %v", err)
-	}
-	if err := m.Logout(); err != nil {
-		t.Fatalf("Logout: %v", err)
-	}
-	if _, ok := m.Status(); ok {
-		t.Fatal("status ainda válido após logout")
-	}
-	f, _ := store.Load()
-	if f.Token != nil || f.Email != "" {
-		t.Fatalf("store não limpo: %+v", f)
-	}
-}

@@ -3,13 +3,52 @@ package mcpserver
 import (
 	"app-do-breno-agent/internal/breno"
 	"log/slog"
+	"reflect"
+	"slices"
 	"time"
 
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
 func BoolPtr(b bool) *bool {
 	return &b
+}
+
+// camposOpcionais são propriedades que o servidor preenche sozinho (o id do
+// usuário vem do login) ou ignora. Continuam aceitas na entrada, para não
+// quebrar agentes que já as enviam, mas deixam de ser obrigatórias.
+var camposOpcionais = []string{
+	"p_user", "p_user_id", "user_id", "user_input", "UserId",
+	"Order", "Select", "Limit", "select",
+}
+
+// inputSchema gera o schema de entrada a partir do struct, como o SDK faria
+// (derreferenciando ponteiros), e remove camposOpcionais da lista de obrigatórios.
+func inputSchema[In any]() (*jsonschema.Schema, error) {
+	rt := reflect.TypeFor[In]()
+	if rt.Kind() == reflect.Pointer {
+		rt = rt.Elem()
+	}
+	schema, err := jsonschema.ForType(rt, &jsonschema.ForOptions{})
+	if err != nil {
+		return nil, err
+	}
+	schema.Required = slices.DeleteFunc(schema.Required, func(name string) bool {
+		return slices.Contains(camposOpcionais, name)
+	})
+	return schema, nil
+}
+
+// addTool registra a tool com o schema de entrada ajustado por inputSchema.
+func addTool[In any](server *mcp.Server, tool *mcp.Tool, handler mcp.ToolHandlerFor[In, any]) error {
+	schema, err := inputSchema[In]()
+	if err != nil {
+		return err
+	}
+	tool.InputSchema = schema
+	mcp.AddTool(server, tool, handler)
+	return nil
 }
 
 func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) {
@@ -40,7 +79,7 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 
 	server := mcp.NewServer(implementation, options)
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "criar_movimentacao",
 		Description: "Cria uma nova movimentação que pode ser do tipo (Entrada, Saida, Diario, Economia ou Cartão)",
 		Annotations: &mcp.ToolAnnotations{
@@ -50,9 +89,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleCreateTransactionTool(svc))
+		HandleCreateTransactionTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "atualizar_movimentacao",
 		Description: "Atualiza uma movimentação que pode ser do tipo (Entrada, Saida, Diario, Economia ou Cartão)",
 		Annotations: &mcp.ToolAnnotations{
@@ -62,9 +103,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleUpdateTransactionTool(svc))
+		HandleUpdateTransactionTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao",
 		Description: "Deleta movimentação a partir do seu ID",
 		Annotations: &mcp.ToolAnnotations{
@@ -74,9 +117,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleDeleteTransactionTool(svc))
+		HandleDeleteTransactionTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "criar_movimentacao_em_serie",
 		Description: "Cria uma série de movimentações recorrentes que se repetem semanalmente, mensalmente, diariamente ou parcelado.",
 		Annotations: &mcp.ToolAnnotations{
@@ -86,9 +131,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleCreateTransactionInSerieTool(svc))
+		HandleCreateTransactionInSerieTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "atualizar_movimentacao_em_serie",
 		Description: "Atualiza os dados de uma transação recorrente, acione a tool 'listar_movimentacao_por_id' antes de atualizar.",
 		Annotations: &mcp.ToolAnnotations{
@@ -98,9 +145,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleUpdateTransactionInSerieTool(svc))
+		HandleUpdateTransactionInSerieTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "deletar_movimentacao_em_serie_da_data",
 		Description: "Deleta as transações de uma série recorrente a partir de uma data e ID da movimentação recorrente",
 		Annotations: &mcp.ToolAnnotations{
@@ -110,9 +159,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleDeleteTransactionInSerieTool(svc))
+		HandleDeleteTransactionInSerieTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "deletar_todas_movimentacoes_em_serie",
 		Description: "Deleta todas as transações recorrentes independente de data",
 		Annotations: &mcp.ToolAnnotations{
@@ -122,9 +173,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleDeleteAllTransactionInSerieTool(svc))
+		HandleDeleteAllTransactionInSerieTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_movimentacoes",
 		Description: "Lista todas as movimentações filtrando por tipo (Entrada, Saida, Diario, Economia ou Cartao) e pelo período",
 		Annotations: &mcp.ToolAnnotations{
@@ -134,9 +187,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    false,
 		},
 	},
-		HandleFetchTransactionTool(svc))
+		HandleFetchTransactionTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_saldos",
 		Description: "Lista o saldos para cada tipo a partir do mês solicitado",
 		Annotations: &mcp.ToolAnnotations{
@@ -146,9 +201,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchResumeBalanceTool(svc))
+		HandleFetchResumeBalanceTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_tags",
 		Description: "Lista as tags e seus totais no mês",
 		Annotations: &mcp.ToolAnnotations{
@@ -158,9 +215,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchTagsTool(svc))
+		HandleFetchTagsTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_cartoes_de_creditos",
 		Description: "Lista os cartões de creditos cadastrados com dia de vencimento e fechamento para calculo de fatura",
 		Annotations: &mcp.ToolAnnotations{
@@ -170,9 +229,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchCardsTool(svc))
+		HandleFetchCardsTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_totais_mes",
 		Description: "Lista os totais e indicadores de um mês específico",
 		Annotations: &mcp.ToolAnnotations{
@@ -182,9 +243,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchTotalBalanceMonthlyTool(svc))
+		HandleFetchTotalBalanceMonthlyTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_performance_ano",
 		Description: "Lista a performance financeira mês a mês em um ano",
 		Annotations: &mcp.ToolAnnotations{
@@ -194,9 +257,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchPerformanceYearTool(svc))
+		HandleFetchPerformanceYearTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_custo_de_vida_ano",
 		Description: "Lista o custo de vida mês a mês em um ano",
 		Annotations: &mcp.ToolAnnotations{
@@ -206,9 +271,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchLifeCostYearTool(svc))
+		HandleFetchLifeCostYearTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_economia_ano",
 		Description: "Lista o total economizado mês a mês em um ano",
 		Annotations: &mcp.ToolAnnotations{
@@ -218,9 +285,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchSavingYearTool(svc))
+		HandleFetchSavingYearTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_diario_medio_ano",
 		Description: "Lista o gasto diário médio mês a mês em um ano",
 		Annotations: &mcp.ToolAnnotations{
@@ -230,9 +299,11 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchAverageCostDailyTool(svc))
+		HandleFetchAverageCostDailyTool(svc)); err != nil {
+		return nil, err
+	}
 
-	mcp.AddTool(server, &mcp.Tool{
+	if err := addTool(server, &mcp.Tool{
 		Name:        "listar_movimentacao_por_id",
 		Description: "Obter movimentação pelo ID para atualização dos dados",
 		Annotations: &mcp.ToolAnnotations{
@@ -242,7 +313,9 @@ func NewMcpServer(logger *slog.Logger, svc breno.Financas) (*mcp.Server, error) 
 			ReadOnlyHint:    true,
 		},
 	},
-		HandleFetchTransactionByIdTool(svc))
+		HandleFetchTransactionByIdTool(svc)); err != nil {
+		return nil, err
+	}
 
 	return server, nil
 }

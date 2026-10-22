@@ -8,13 +8,11 @@ import (
 	"path/filepath"
 )
 
-// File é o conteúdo de ~/.breno/config.json — credenciais, overrides opcionais
-// de endpoint e o último token obtido. Texto plano, permissão 0600.
+// File é o conteúdo de ~/.breno/config.json — credenciais e o último token
+// obtido. Texto plano, permissão 0600.
 type File struct {
 	Email    string `json:"email,omitempty"`
 	Password string `json:"senha,omitempty"`
-	BaseURL  string `json:"base_url,omitempty"`
-	APIKey   string `json:"api_key,omitempty"`
 	Token    *Token `json:"token,omitempty"`
 }
 

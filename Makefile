@@ -2,9 +2,7 @@
 
 BIN_DIR   := bin
 MCP_BIN   := $(BIN_DIR)/breno-mcp
-CLI_BIN   := $(BIN_DIR)/breno
 MCP_MAIN  := ./cmd/breno-mcp
-CLI_MAIN  := ./cmd/breno-cli
 
 .PHONY: help
 help: ## Lista os targets disponíveis
@@ -12,19 +10,16 @@ help: ## Lista os targets disponíveis
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: build
-build: build-mcp build-cli ## Compila os dois binários
-
-.PHONY: build-mcp
-build-mcp: ## Compila o servidor MCP (breno-mcp)
+build: ## Compila o servidor MCP (breno-mcp)
 	CGO_ENABLED=0 go build -o $(MCP_BIN) $(MCP_MAIN)
-
-.PHONY: build-cli
-build-cli: ## Compila a CLI (breno)
-	CGO_ENABLED=0 go build -o $(CLI_BIN) $(CLI_MAIN)
 
 .PHONY: test
 test: ## Roda todos os testes
 	go test ./... -count=1
+
+.PHONY: test-integration
+test-integration: ## Testa as rotas reais da API (requer API_USERNAME/API_PASSWORD; escrita com BRENO_IT_WRITE=1)
+	go test -tags integration ./internal/integration/ -count=1 -v
 
 .PHONY: test-race
 test-race: ## Roda os testes com race detector (requer cgo)
@@ -48,10 +43,6 @@ tidy: ## go mod tidy
 .PHONY: run-mcp
 run-mcp: ## Executa o servidor MCP localmente (stdio)
 	go run $(MCP_MAIN)
-
-.PHONY: run-cli
-run-cli: ## Executa a CLI localmente (use ARGS="...")
-	go run $(CLI_MAIN) $(ARGS)
 
 .PHONY: clean
 clean: ## Remove artefatos de build

@@ -1,6 +1,6 @@
 // Package breno concentra as regras de negócio do App do Breno num único lugar,
-// independente de cliente (MCP, CLI, etc). Os clientes dependem apenas da
-// interface Financas e dos tipos deste pacote — nunca dos structs de wire.
+// independente do transporte. O servidor MCP depende apenas da interface
+// Financas e dos tipos deste pacote — nunca dos structs de wire.
 package breno
 
 import "app-do-breno-agent/internal/structs"
@@ -74,7 +74,7 @@ type FiltroMovimentacoes struct {
 }
 
 // Tipos de resposta (read models). Por ora são aliases dos structs de wire —
-// os clientes ainda importam só o pacote breno, e a camada pode endurecer
+// o servidor MCP importa só o pacote breno, e a camada pode endurecer
 // depois sem quebrar assinaturas.
 type (
 	Movimentacao   = structs.TransactionListResponse

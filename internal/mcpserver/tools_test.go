@@ -2,7 +2,9 @@ package mcpserver
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"slices"
 	"strings"
 	"testing"
 
@@ -113,5 +115,52 @@ func TestFetchTransactionTool_MapeiaFiltroEEstrutura(t *testing.T) {
 	}
 	if _, ok := structured.(listResult[breno.Movimentacao]); !ok {
 		t.Fatalf("structuredContent = %T", structured)
+	}
+}
+
+func TestNewMcpServer_CamposDoServidorSaoOpcionais(t *testing.T) {
+	server, err := NewMcpServer(nil, &fakeFinancas{})
+	if err != nil {
+		t.Fatalf("NewMcpServer: %v", err)
+	}
+	ctx := context.Background()
+	serverT, clientT := mcp.NewInMemoryTransports()
+	ss, err := server.Connect(ctx, serverT, nil)
+	if err != nil {
+		t.Fatalf("server.Connect: %v", err)
+	}
+	defer ss.Close()
+	cs, err := mcp.NewClient(&mcp.Implementation{Name: "test", Version: "0"}, nil).Connect(ctx, clientT, nil)
+	if err != nil {
+		t.Fatalf("client.Connect: %v", err)
+	}
+	defer cs.Close()
+
+	res, err := cs.ListTools(ctx, nil)
+	if err != nil {
+		t.Fatalf("ListTools: %v", err)
+	}
+	required := map[string][]string{}
+	for _, tool := range res.Tools {
+		var schema struct {
+			Required []string `json:"required"`
+		}
+		data, _ := json.Marshal(tool.InputSchema)
+		if err := json.Unmarshal(data, &schema); err != nil {
+			t.Fatalf("%s: schema inválido: %v", tool.Name, err)
+		}
+		for _, name := range schema.Required {
+			if slices.Contains(camposOpcionais, name) {
+				t.Errorf("%s: campo %q ainda é obrigatório", tool.Name, name)
+			}
+		}
+		required[tool.Name] = schema.Required
+	}
+
+	// Os campos de negócio continuam obrigatórios.
+	for _, name := range []string{"p_valor", "p_tipo", "p_descricao", "p_data"} {
+		if !slices.Contains(required["criar_movimentacao"], name) {
+			t.Errorf("criar_movimentacao: %q deveria ser obrigatório (required = %v)", name, required["criar_movimentacao"])
+		}
 	}
 }

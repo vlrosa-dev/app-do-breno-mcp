@@ -17,27 +17,11 @@ builds:
     goos: [linux, windows, darwin]
     goarch: [amd64, arm64]
 
-  - id: cli
-    main: ./cmd/breno-cli
-    binary: breno
-    env:
-      - CGO_ENABLED=0
-    goos: [linux, windows, darwin]
-    goarch: [amd64, arm64]
-
 archives:
   - id: mcp
     ids: [mcp]
     formats: [tar.gz]
     name_template: "breno-mcp_{{ .Os }}_{{ .Arch }}"
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-
-  - id: cli
-    ids: [cli]
-    formats: [tar.gz]
-    name_template: "breno_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         formats: [zip]

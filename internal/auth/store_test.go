@@ -25,7 +25,6 @@ func TestFileStore_SaveLoadRoundTrip(t *testing.T) {
 	want := File{
 		Email:    "user@exemplo.com",
 		Password: "segredo",
-		BaseURL:  "https://api.exemplo.com",
 		Token: &Token{
 			AccessToken: "abc",
 			ExpiresAt:   time.Now().Add(time.Hour).Round(time.Second),
@@ -40,7 +39,7 @@ func TestFileStore_SaveLoadRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Load: %v", err)
 	}
-	if got.Email != want.Email || got.Password != want.Password || got.BaseURL != want.BaseURL {
+	if got.Email != want.Email || got.Password != want.Password {
 		t.Fatalf("campos divergentes: %+v", got)
 	}
 	if got.Token == nil || got.Token.AccessToken != "abc" || got.Token.UserID != "u-1" {
