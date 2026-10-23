@@ -160,6 +160,28 @@ Precedência de configuração: **variável de ambiente > `~/.breno/config.json`
 Roda via **stdio**. Configuração igual em todos os clientes: comando (caminho do
 binário) + variáveis de ambiente.
 
+### Exemplos de perguntas
+
+Depois de conectar o servidor ao seu assistente de IA, você pode fazer perguntas
+em linguagem natural, por exemplo:
+
+- “Quais são meus saldos deste mês?”
+- “Quais foram minhas entradas e saídas em setembro de 2026?”
+- “Mostre os totais e indicadores de agosto de 2026.”
+- “Como foi minha performance financeira mês a mês em 2026?”
+- “Quanto economizei em cada mês de 2026?”
+- “Qual foi meu custo de vida mês a mês em 2026?”
+- “Qual foi meu gasto diário médio em cada mês de 2026?”
+- “Quais tags tenho e quais foram seus totais neste mês?”
+- “Quais cartões de crédito estão cadastrados e quando fecham e vencem?”
+- “Encontre a movimentação de [descrição] no período de [data inicial] a [data final].”
+- “Registre uma saída de R$ 85,50 em [data], com a descrição [descrição].”
+- “Crie uma despesa mensal recorrente de R$ 120,00, começando em [data], para [descrição].”
+
+Para alterar ou apagar movimentações, informe qual registro deseja modificar ou
+remover. Para atualizar uma movimentação recorrente, o assistente deve primeiro
+localizá-la pelo ID. Confira os dados antes de pedir alterações ou exclusões.
+
 ### Claude Code
 
 ```bash
