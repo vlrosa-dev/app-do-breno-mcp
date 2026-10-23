@@ -61,6 +61,98 @@ Para alterar ou apagar movimentações, diga ao assistente qual registro deseja
 modificar ou remover. Confira os dados apresentados antes de confirmar alterações
 ou exclusões.
 
+## Para mantenedores
+
+Esta seção reúne informações técnicas para desenvolvimento e configuração manual.
+
+### Sobre o projeto
+
+O App do Breno MCP é um servidor MCP escrito em Go. Ele se comunica com os
+clientes de IA pelo padrão **stdio**. O fluxo principal é:
+
+`cliente de IA → servidor MCP → regras de negócio → API do App do Breno`
+
+As ferramentas e suas regras ficam no código-fonte. O executável é
+`app-do-breno-mcp`. O servidor precisa das credenciais da conta:
+
+- `API_USERNAME`: e-mail da conta do App do Breno.
+- `API_PASSWORD`: senha da conta.
+
+`API_BASE_URL` e `API_KEY` já têm valores padrão no projeto. As credenciais e o
+token de acesso são guardados localmente em `~/.breno/config.json`; proteja esse
+conteúdo como uma senha.
+
+### Configuração nos clientes de IA
+
+Use o caminho completo do executável instalado no campo `command`. Nos exemplos,
+substitua `/caminho/para/app-do-breno-mcp` pelo caminho correto no computador.
+
+**Claude Code**
+
+```bash
+claude mcp add app-do-breno-mcp \
+  --env API_USERNAME=seu-email@exemplo.com \
+  --env API_PASSWORD=sua-senha \
+  -- /caminho/para/app-do-breno-mcp
+```
+
+**Claude Desktop, Cursor e Gemini CLI**
+
+Adicione uma entrada `app-do-breno-mcp` à configuração MCP do cliente:
+
+```json
+{
+  "mcpServers": {
+    "app-do-breno-mcp": {
+      "command": "/caminho/para/app-do-breno-mcp",
+      "env": {
+        "API_USERNAME": "seu-email@exemplo.com",
+        "API_PASSWORD": "sua-senha"
+      }
+    }
+  }
+}
+```
+
+No Claude Desktop, essa configuração fica nas preferências do aplicativo.
+No Cursor e no Gemini CLI, use a área de configuração MCP do cliente.
+
+**Codex CLI**
+
+Adicione ao `config.toml`:
+
+```toml
+[mcp_servers.app-do-breno-mcp]
+command = "/caminho/para/app-do-breno-mcp"
+args = []
+
+[mcp_servers.app-do-breno-mcp.env]
+API_USERNAME = "seu-email@exemplo.com"
+API_PASSWORD = "sua-senha"
+```
+
+Não substitua configurações existentes do cliente ao adicionar o servidor. Os
+exemplos contêm credenciais ilustrativas; não compartilhe sua senha e restrinja
+o acesso às configurações que a guardam.
+
+### Desenvolvimento e publicação
+
+Com Go instalado, os principais comandos são:
+
+```bash
+make build       # compila em bin/app-do-breno-mcp
+make test        # roda os testes unitários
+make test-race   # roda os testes com detector de condições de corrida
+make cover       # calcula a cobertura dos testes
+make lint        # executa go vet e golangci-lint, se disponível
+make run-mcp     # inicia o servidor local via stdio
+```
+
+Os testes de integração usam `API_USERNAME` e `API_PASSWORD`. Testes de escrita
+podem alterar dados reais da conta e só devem ser executados quando isso for
+intencional. A publicação das versões é feita pelo GoReleaser ao criar e enviar
+uma tag no formato `v*`.
+
 ## Licença
 
 [MIT](LICENSE)
