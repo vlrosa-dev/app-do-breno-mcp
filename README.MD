@@ -2,6 +2,17 @@
 
 Use um assistente de IA para consultar e organizar suas finanças no App do Breno.
 
+## Pré-requisitos
+
+Para usar o MCP, você precisa de:
+
+- Uma conta ativa no App do Breno e o e-mail e a senha usados para acessá-la.
+- Um assistente de IA compatível com MCP, instalado no computador, como Claude
+  Code, Claude Desktop, Cursor, Gemini CLI ou Codex.
+- Acesso à internet durante o uso.
+- Permissão para instalar e configurar ferramentas no computador. Se não tiver,
+  peça ajuda à pessoa responsável pelo dispositivo.
+
 ## Instalação guiada por IA (para quem não é técnico)
 
 Não sabe usar ferramentas de configuração? Peça ao seu assistente de IA (Claude Code,
@@ -152,6 +163,30 @@ Os testes de integração usam `API_USERNAME` e `API_PASSWORD`. Testes de escrit
 podem alterar dados reais da conta e só devem ser executados quando isso for
 intencional. A publicação das versões é feita pelo GoReleaser ao criar e enviar
 uma tag no formato `v*`.
+
+
+## Aviso
+
+Este é um projeto independente, criado pela comunidade. Não é oficial, não é
+mantido e não possui vínculo com o App do Breno ou seus responsáveis.
+
+## Sugestões de melhorias
+
+Tem uma ideia ou encontrou algo que pode melhorar? Compartilhe sua sugestão na
+comunidade da Escola do Breno para conversar com outras pessoas e contribuir
+com o projeto.
+
+## Segurança
+
+O servidor MCP é um programa de código aberto que roda no seu computador e usa
+sua própria conta para acessar os serviços do App do Breno. As credenciais e o
+token de acesso ficam guardados localmente, por isso mantenha seu computador e
+as configurações do assistente protegidos. Nunca compartilhe sua senha.
+
+O código pode ser consultado por qualquer pessoa, mas isso não elimina todos os
+riscos. Use uma versão obtida pelos canais do projeto, confira os dados antes
+de confirmar alterações financeiras e avise a comunidade se encontrar algum
+problema de segurança.
 
 ## Licença
 
