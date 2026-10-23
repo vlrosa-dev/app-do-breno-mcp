@@ -15,9 +15,7 @@ Cursor, Gemini CLI ou Codex) fazer a instalação por você.
 **Antes de começar, tenha em mãos:**
 
 1. O **e-mail e a senha** que você usa para entrar no App do Breno.
-2. Acesso a este repositório no GitHub (ele é privado — peça acesso ao
-   mantenedor se ainda não tiver).
-3. Um assistente de IA que rode no seu computador (ex.: [Claude Code](https://claude.com/claude-code)).
+2. Um assistente de IA que rode no seu computador (ex.: [Claude Code](https://claude.com/claude-code)).
 
 **Como fazer:**
 
@@ -34,8 +32,9 @@ um de cada vez, e me peça confirmação antes de qualquer ação que altere o m
 computador. Não presuma que eu sei o que é terminal, variável de ambiente ou JSON.
 
 Informações sobre o projeto:
-- Repositório (privado): https://github.com/vlrosa-dev/app-do-breno-mcp
+- Repositório (público): https://github.com/vlrosa-dev/app-do-breno-mcp
 - Os binários prontos ficam na página "Releases" (use a versão mais recente).
+  Não é preciso conta no GitHub para baixar.
   Nome dos arquivos: app-do-breno-mcp_<sistema>_<arquitetura>.tar.gz
   (no Windows é .zip), onde <sistema> é linux, darwin (macOS) ou windows e
   <arquitetura> é amd64 (Intel/AMD) ou arm64 (Apple Silicon M1/M2/M3/M4,
@@ -54,13 +53,12 @@ Siga estes passos:
    me pergunte.
 
 3. Baixe o arquivo da release mais recente correspondente ao meu sistema:
-   - Se o comando "gh" (GitHub CLI) estiver instalado e autenticado, use
-     "gh release download -R vlrosa-dev/app-do-breno-mcp -p '<nome-do-arquivo>'".
-   - Se o "gh" não estiver autenticado, me oriente a rodar "gh auth login"
-     passo a passo.
-   - Se não houver "gh", me explique como baixar pelo navegador na página
-     https://github.com/vlrosa-dev/app-do-breno-mcp/releases (estando logado
-     no GitHub) e me diga em qual pasta salvar.
+   - O link direto da versão mais recente é
+     https://github.com/vlrosa-dev/app-do-breno-mcp/releases/latest/download/<nome-do-arquivo>
+     — baixe com curl (Linux/macOS) ou Invoke-WebRequest (Windows).
+   - Se o download pelo terminal não funcionar, me explique como baixar pelo
+     navegador na página https://github.com/vlrosa-dev/app-do-breno-mcp/releases
+     e me diga em qual pasta salvar.
 
 4. Extraia o arquivo e coloque o executável em um local fixo e fácil:
    - Linux/macOS: ~/.local/bin/app-do-breno-mcp (crie a pasta se não existir)
@@ -239,3 +237,7 @@ em amd64/arm64:
 git tag v0.1.0
 git push origin v0.1.0
 ```
+
+## Licença
+
+[MIT](LICENSE)
